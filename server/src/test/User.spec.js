@@ -10,12 +10,13 @@ describe('UserFactory', async () => {
 
     const user = await service.find(id);
 
-    expect(user).toEqual({ id, name: 'John Doe' });
+    expect(user).toEqual({ id, name: 'John Doe', email: 'johndoe@mail.com' });
   });
 
   it('should create a new user', async () => {
     const userData = {
       name: 'Cassiano',
+      email: 'cassiano@mail.com',
     };
 
     const userToAdd = new User(userData);
@@ -32,6 +33,7 @@ describe('UserFactory', async () => {
   it('should update a existing user', async () => {
     const userData = {
       name: 'Cassiano',
+      email: 'cassiano@mail.com',
     };
 
     const userToAdd = new User(userData);
@@ -44,6 +46,7 @@ describe('UserFactory', async () => {
 
     const userToUpdate = {
       name: 'Cassiano Junior',
+      email: 'cassianojr@mail.com',
     };
 
     await service.update(id, userToUpdate);
@@ -58,6 +61,7 @@ describe('UserFactory', async () => {
   it('should delete a existing user', async () => {
     const userData = {
       name: 'Cassiano',
+      email: 'cassiano@mail.com',
     };
 
     const userToAdd = new User(userData);
@@ -103,8 +107,61 @@ describe('UserFactory', async () => {
     const users = await service.find();
 
     expect(users).toEqual([
-      { id: 'asd1asd', name: 'John Doe' },
-      { id: 'asd2asd', name: 'Jane Doe' },
+      { id: 'asd1asd', name: 'John Doe', email: 'johndoe@mail.com' },
+      { id: 'asd2asd', name: 'Jane Doe', email: 'janedoe@mail.com' },
     ]);
+  });
+
+  it('should return an error when trying to create a user with an existing email', async () => {
+    const userData = {
+      name: 'Cassiano',
+      email: 'cassiano@mail.com',
+    };
+
+    const userToAdd = new User(userData);
+    const id = await service.create(userToAdd);
+    const user = await service.find(id);
+
+    expect(user).toEqual(userToAdd);
+
+    const userWithSameEmail = {
+      name: 'Cassiano Junior',
+      email: 'cassiano@mail.com',
+    };
+
+    const userToAddWithSameEmail = new User(userWithSameEmail);
+    const error = await service.create(userToAddWithSameEmail);
+    expect(error).toEqual({ error: 'Email already exists!' });
+
+    await service.delete(id);
+    const deletedUser = await service.find(id);
+
+    expect(deletedUser).toEqual({ error: 'User not found!' });
+  });
+
+  it('should return an error when trying to update a user with an existing email', async () => {
+    const userData = {
+      name: 'Cassiano',
+      email: 'cassiano@mail.com',
+    };
+
+    const userToAdd = new User(userData);
+    const id = await service.create(userToAdd);
+    const user = await service.find(id);
+
+    expect(user).toEqual(userToAdd);
+
+    const userWithExistingEmail = {
+      name: 'Cassiano Junior',
+      email: 'johndoe@mail.com',
+    };
+
+    const error = await service.update(id, userWithExistingEmail);
+    expect(error).toEqual({ error: 'Email already exists!' });
+
+    await service.delete(id);
+    const deletedUser = await service.find(id);
+
+    expect(deletedUser).toEqual({ error: 'User not found!' });
   });
 });

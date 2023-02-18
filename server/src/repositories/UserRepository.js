@@ -23,6 +23,13 @@ class UserRepository {
 
   async create(userData) {
     const currentUsers = await this._currentFileContent();
+
+    const userWithSameEmail = currentUsers.find(
+      ({ email }) => email === userData.email
+    );
+
+    if (userWithSameEmail) return { error: 'Email already exists!' };
+
     currentUsers.push(userData);
 
     await writeFile(this.file, JSON.stringify(currentUsers));
@@ -35,6 +42,13 @@ class UserRepository {
 
     if (!users.find(({ id }) => id === userId))
       return { error: 'User not found!' };
+
+    const userWithSameEmail = users.find(
+      ({ email }) => email === userData.email
+    );
+
+    if (userWithSameEmail && userWithSameEmail.id !== userId)
+      return { error: 'Email already exists!' };
 
     const updatedUsers = users.map((user) => {
       if (user.id === userId)

@@ -1,9 +1,10 @@
 const shortid = require('shortid');
 
 class User {
-  constructor({ name }) {
+  constructor({ name, email }) {
     this.id = shortid.generate();
     this.name = name;
+    this.email = email;
   }
 
   isValid() {
