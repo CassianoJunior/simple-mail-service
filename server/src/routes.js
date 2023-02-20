@@ -10,6 +10,7 @@ module.exports = {
   '/messages:post': messageController.createMessage,
   '/messages:put': messageController.updateMessage,
   '/messages:delete': messageController.deleteMessage,
+  '/userMessages:get': messageController.getMessagesByUser,
 
   default: async (req, res) => {
     res.write('Hello, World!');

@@ -8,6 +8,7 @@ module.exports = {
   getMessage: async (req, res) => {
     try {
       const { id } = req.queryString;
+
       const message = await messageService.find(id);
       res.write(JSON.stringify(message));
 
@@ -111,6 +112,19 @@ module.exports = {
       res.write(JSON.stringify({ success: 'Message deleted with success!' }));
 
       return res.end();
+    } catch (error) {
+      handleError(res)(error);
+    }
+  },
+  getMessagesByUser: async (req, res) => {
+    try {
+      const { id } = req.queryString;
+
+      const messages = await messageService.findByUser(id);
+
+      res.write(JSON.stringify(messages));
+
+      res.end();
     } catch (error) {
       handleError(res)(error);
     }

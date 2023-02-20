@@ -7,12 +7,19 @@ class Message {
     this.recipientId = recipientId;
     this.subject = subject;
     this.body = body;
+    this.isRead = false;
+    this.createdAt = new Date().toISOString();
+    this.updatedAt = new Date().toISOString();
   }
 
   isValid() {
     const propertyNames = Object.getOwnPropertyNames(this);
     const amountInvalid = propertyNames
-      .map((property) => (!!this[property] ? null : `${property} is missing!`))
+      .map((property) =>
+        !!this[property] || property === 'isRead'
+          ? null
+          : `${property} is missing!`
+      )
       .filter((item) => !!item);
 
     return {

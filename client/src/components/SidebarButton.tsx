@@ -17,7 +17,7 @@ const SidebarButton = ({
       {...rest}
       className={`${
         active ? 'bg-zinc-700 bg-opacity-20' : ''
-      } flex items-center w-full px-4 py-2 text-left text-white rounded-md hover:bg-zinc-700 hover:bg-opacity-20  `}
+      } flex items-center w-full px-4 py-2 text-left text-white rounded-md hover:bg-zinc-700 hover:bg-opacity-20 outline-none focus:ring-2 `}
     >
       <div className="mr-2">{Icon}</div>
       <h2 className="font-inter font-semibold text-sm">{title}</h2>

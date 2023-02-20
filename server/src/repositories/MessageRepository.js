@@ -22,6 +22,14 @@ class MessageRepository {
     return message;
   }
 
+  async findByUser(userId) {
+    const messages = await this._currentFileContent();
+
+    return messages.filter(({ senderId, recipientId }) => {
+      return senderId === userId || recipientId === userId;
+    });
+  }
+
   async create(messageData) {
     const currentMessages = await this._currentFileContent();
 
@@ -43,6 +51,7 @@ class MessageRepository {
         return {
           ...messageData,
           id: messageId,
+          updatedAt: new Date().toISOString(),
         };
 
       return message;
