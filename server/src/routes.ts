@@ -1,7 +1,8 @@
-const userController = require('./controllers/userController');
-const messageController = require('./controllers/messageController');
+import { IncomingMessage, ServerResponse } from 'http';
+import { messageController } from './controllers/MessageController';
+import { userController } from './controllers/UserController';
 
-module.exports = {
+const routes = {
   '/users:get': userController.getUser,
   '/users:post': userController.createUser,
   '/users:put': userController.updateUser,
@@ -10,10 +11,12 @@ module.exports = {
   '/messages:post': messageController.createMessage,
   '/messages:put': messageController.updateMessage,
   '/messages:delete': messageController.deleteMessage,
-  '/userMessages:get': messageController.getMessagesByUser,
+  '/user/messages:get': messageController.getUserMessages,
 
-  default: async (req, res) => {
+  default: async (req: IncomingMessage, res: ServerResponse) => {
     res.write('Hello, World!');
     res.end();
   },
 };
+
+export { routes };
