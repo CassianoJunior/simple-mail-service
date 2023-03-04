@@ -1,7 +1,7 @@
 import { prisma } from '../../../utils/prisma';
 import { CreateUserData, IUserRepository } from '../../IUserRepository';
 
-class UserRepository implements IUserRepository {
+class PrismaUserRepository implements IUserRepository {
   async find(userId: string) {
     const user = await prisma.user.findUnique({
       where: {
@@ -67,4 +67,4 @@ class UserRepository implements IUserRepository {
   }
 }
 
-export { UserRepository };
+export { PrismaUserRepository };

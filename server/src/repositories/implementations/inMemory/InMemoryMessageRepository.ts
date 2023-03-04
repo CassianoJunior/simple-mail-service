@@ -1,10 +1,11 @@
+import crypto from 'crypto';
 import { Message } from '../../../entities/Message';
 import {
   CreateMessageData,
   IMessageRepository,
 } from '../../IMessageRepository';
 
-class MessageRepository implements IMessageRepository {
+class InMemoryMessageRepository implements IMessageRepository {
   messages: Message[] = [];
 
   async find(id: string) {
@@ -49,4 +50,4 @@ class MessageRepository implements IMessageRepository {
   }
 }
 
-export { MessageRepository };
+export { InMemoryMessageRepository };

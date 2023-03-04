@@ -4,7 +4,7 @@ import {
   IParticipantsOnMessageRepository,
 } from '../../IParticipantsOnMessageRepository';
 
-class ParticipantsOnMessageRepository
+class PrismaParticipantsOnMessageRepository
   implements IParticipantsOnMessageRepository
 {
   async find(participantsOnMessageId: string) {
@@ -59,13 +59,11 @@ class ParticipantsOnMessageRepository
   }
 
   async create(participantsOnMessageData: CreateParticipantsOnMessageData) {
-    await prisma.participantsOnMessage.create({
+    return await prisma.participantsOnMessage.create({
       data: {
         ...participantsOnMessageData,
       },
     });
-
-    return;
   }
 
   async update(
@@ -85,14 +83,28 @@ class ParticipantsOnMessageRepository
   }
 
   async delete(participantsOnMessageId: string) {
-    await prisma.participantsOnMessage.delete({
+    const deletedParticipantsOnMessage =
+      await prisma.participantsOnMessage.delete({
+        where: {
+          id: participantsOnMessageId,
+        },
+      });
+
+    const existsOtherRecord = await prisma.participantsOnMessage.findFirst({
       where: {
-        id: participantsOnMessageId,
+        messageId: deletedParticipantsOnMessage.messageId,
       },
     });
+
+    if (!existsOtherRecord)
+      await prisma.message.delete({
+        where: {
+          id: deletedParticipantsOnMessage.messageId,
+        },
+      });
 
     return;
   }
 }
 
-export { ParticipantsOnMessageRepository };
+export { PrismaParticipantsOnMessageRepository };

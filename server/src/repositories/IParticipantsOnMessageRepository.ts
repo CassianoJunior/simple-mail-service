@@ -5,6 +5,11 @@ interface CreateParticipantsOnMessageData {
   recipientId: string;
 }
 
+interface CreateParticipantsOnMessageDataFromMessage {
+  senderId: string;
+  recipientId: string;
+}
+
 interface IParticipantsOnMessageRepository {
   find(
     participantsOnMessageId: string
@@ -12,7 +17,7 @@ interface IParticipantsOnMessageRepository {
   findAll(): Promise<ParticipantsOnMessage[]>;
   create(
     participantsOnMessageData: CreateParticipantsOnMessageData
-  ): Promise<void>;
+  ): Promise<ParticipantsOnMessage>;
   update(
     participantsOnMessageId: string,
     participantsOnMessageData: CreateParticipantsOnMessageData
@@ -20,4 +25,8 @@ interface IParticipantsOnMessageRepository {
   delete(participantsOnMessageId: string): Promise<void>;
 }
 
-export { IParticipantsOnMessageRepository, CreateParticipantsOnMessageData };
+export {
+  IParticipantsOnMessageRepository,
+  CreateParticipantsOnMessageData,
+  CreateParticipantsOnMessageDataFromMessage,
+};

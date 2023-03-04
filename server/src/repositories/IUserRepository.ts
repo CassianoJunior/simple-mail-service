@@ -5,13 +5,18 @@ interface CreateUserData {
   email: string;
 }
 
+interface UpdateUserData {
+  name?: string;
+  email?: string;
+}
+
 interface IUserRepository {
   find(id: string): Promise<User | undefined>;
   findByEmail(email: string): Promise<User | undefined>;
   findAll(): Promise<User[]>;
   create(user: CreateUserData): Promise<void>;
-  update(id: string, user: CreateUserData): Promise<void>;
+  update(id: string, user: UpdateUserData): Promise<void>;
   delete(id: string): Promise<void>;
 }
 
-export { IUserRepository, CreateUserData };
+export { IUserRepository, CreateUserData, UpdateUserData };

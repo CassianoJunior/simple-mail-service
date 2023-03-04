@@ -1,7 +1,8 @@
+import crypto from 'node:crypto';
 import { User } from '../../../entities/User';
 import { CreateUserData, IUserRepository } from '../../IUserRepository';
 
-class UserRepository implements IUserRepository {
+class InMemoryUserRepository implements IUserRepository {
   users: User[] = [];
 
   async find(id: string) {
@@ -50,3 +51,5 @@ class UserRepository implements IUserRepository {
     this.users = this.users.filter((user) => user.id !== id);
   }
 }
+
+export { InMemoryUserRepository };

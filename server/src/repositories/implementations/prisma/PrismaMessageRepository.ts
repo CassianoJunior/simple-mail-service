@@ -2,7 +2,7 @@ import { Message } from '@prisma/client';
 import { prisma } from '../../../utils/prisma';
 import { IMessageRepository } from '../../IMessageRepository';
 
-class MessageRepository implements IMessageRepository {
+class PrismaMessageRepository implements IMessageRepository {
   async find(messageId: string) {
     const message = await prisma.message.findUnique({
       where: {
@@ -27,13 +27,11 @@ class MessageRepository implements IMessageRepository {
   }
 
   async create(messageData: Message) {
-    await prisma.message.create({
+    return await prisma.message.create({
       data: {
         ...messageData,
       },
     });
-
-    return;
   }
 
   async update(messageId: string, messageData: Message) {
@@ -60,4 +58,4 @@ class MessageRepository implements IMessageRepository {
   }
 }
 
-export { MessageRepository };
+export { PrismaMessageRepository };
