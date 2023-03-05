@@ -11,6 +11,7 @@ const routes: Record<string, CallableFunction> = {
   '/messages:post': messageController.createMessage,
   '/messages:put': messageController.updateMessage,
   '/messages:delete': messageController.deleteMessage,
+  '/readMessage:put': messageController.readMessage,
 
   default: async (req: IncomingMessage, res: ServerResponse) => {
     res.write('Route not found');

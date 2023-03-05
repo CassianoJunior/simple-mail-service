@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { useEffect, useState } from 'react';
-import { MessageProps } from './MailList';
+import { MessageProps, useUserContext } from '../contexts/UserContext';
 
 interface MailCardProps extends React.HTMLAttributes<HTMLDivElement> {
   message: MessageProps;
@@ -14,19 +14,8 @@ const MailCard = ({
   isSelected,
   ...rest
 }: MailCardProps) => {
-  const [senderName, setSenderName] = useState<string>('');
+  const { user } = useUserContext();
   const [recipientName, setRecipientName] = useState<string>('');
-
-  const getSenderName = async (id: string) => {
-    const response = await fetch(`http://localhost:3000/users/${id}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    const data = await response.json();
-    setSenderName(data.name);
-  };
 
   const getRecipientName = async (id: string) => {
     const response = await fetch(`http://localhost:3000/users/${id}`, {
@@ -40,8 +29,7 @@ const MailCard = ({
   };
 
   useEffect(() => {
-    getSenderName(message.senderId);
-    getRecipientName(message.recipientId);
+    // getRecipientName(message.recipientId);
   }, []);
 
   return (
@@ -60,7 +48,7 @@ const MailCard = ({
             <div className="flex items-center justify-between">
               <h3 className="text-sm text-white font-semibold">
                 {sectionTitleActive === 'Inbox'
-                  ? senderName
+                  ? user.name
                   : `To: ${recipientName}`}
               </h3>
               <p className="text-[0.65rem] text-gray-400">

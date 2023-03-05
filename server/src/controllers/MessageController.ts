@@ -1,13 +1,13 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import z from 'zod';
 import { generateMessageInstance } from '../factories/MessageFactory';
-import { generateUserInstance } from '../factories/UserFactory';
+import { generateParticipantInstance } from '../factories/ParticipantOnMessageFactory';
 import { DEFAULT_HEADER, handleError } from '../utils';
 import { getUrlParams } from '../utils/handleUrlString';
 import { handle } from '../utils/handleZodErrors';
 
 const messageService = generateMessageInstance();
-const userService = generateUserInstance();
+const participantOnMessageService = generateParticipantInstance();
 
 const messageController = {
   getMessage: async (req: IncomingMessage, res: ServerResponse) => {
@@ -38,7 +38,12 @@ const messageController = {
     for await (const data of req) {
       try {
         const messageSchema = z.object({
-          message: z.object({ body: z.string(), subject: z.string() }),
+          message: z.object({
+            body: z.string(),
+            subject: z.string(),
+            isRead: z.boolean().default(false),
+            isDeleted: z.boolean().default(false),
+          }),
           from: z.string(),
           to: z.string(),
         });
@@ -77,6 +82,8 @@ const messageController = {
         const messageSchema = z.object({
           body: z.string().optional(),
           subject: z.string().optional(),
+          isRead: z.boolean().optional(),
+          isDeleted: z.boolean().optional(),
         });
 
         const message = messageSchema.parse(JSON.parse(data.toString()));
@@ -112,6 +119,30 @@ const messageController = {
         return res.writeHead(400, DEFAULT_HEADER).end(result.value.message);
 
       return res.writeHead(202, DEFAULT_HEADER).end();
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        const errorMessage = handle(err);
+        res.writeHead(400, DEFAULT_HEADER);
+        res.end(`${errorMessage} in url`);
+      } else {
+        handleError(res)(err);
+      }
+    }
+  },
+  readMessage: async (req: IncomingMessage, res: ServerResponse) => {
+    try {
+      const urlSchema = z.object({
+        id: z.string(),
+      });
+
+      const { id } = urlSchema.parse(getUrlParams(req.url));
+
+      const result = await participantOnMessageService.readMessage(id);
+
+      if (result.isLeft())
+        return res.writeHead(400, DEFAULT_HEADER).end(result.value.message);
+
+      return res.writeHead(204, DEFAULT_HEADER).end();
     } catch (err) {
       if (err instanceof z.ZodError) {
         const errorMessage = handle(err);

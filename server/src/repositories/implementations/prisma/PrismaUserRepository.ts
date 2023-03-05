@@ -8,8 +8,20 @@ class PrismaUserRepository implements IUserRepository {
         id: userId,
       },
       include: {
-        messagesReceived: true,
-        messagesSent: true,
+        messagesReceived: {
+          include: {
+            message: true,
+            recipient: true,
+            sender: true,
+          },
+        },
+        messagesSent: {
+          include: {
+            message: true,
+            recipient: true,
+            sender: true,
+          },
+        },
       },
     });
 
@@ -22,8 +34,20 @@ class PrismaUserRepository implements IUserRepository {
         email,
       },
       include: {
-        messagesReceived: true,
-        messagesSent: true,
+        messagesReceived: {
+          include: {
+            message: true,
+            recipient: true,
+            sender: true,
+          },
+        },
+        messagesSent: {
+          include: {
+            message: true,
+            recipient: true,
+            sender: true,
+          },
+        },
       },
     });
 

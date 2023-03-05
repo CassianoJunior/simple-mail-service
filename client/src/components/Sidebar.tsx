@@ -24,12 +24,13 @@ const Sidebar = ({
       <SidebarHeader
         icon={<User color="#2DA4FF" strokeWidth={1.5} size={24} />}
         name={user.name}
+        email={user.email}
       />
       <SidebarButton
         title="Inbox"
         Icon={<Inbox color="#2DA4FF" strokeWidth={1.5} size={16} />}
         active={activeSection === 'Inbox'}
-        bagdeCount={unreadMessages}
+        bagdeCount={0}
         onClick={handleClickInboxSection}
       />
       <SidebarButton

@@ -36,6 +36,8 @@ class MessageService {
         messageId: message.id,
         senderId: participantsData.senderId,
         recipientId: participantsData.recipientId,
+        isDeleted: false,
+        isRead: false,
       });
 
     return right(participantsOnMessage);

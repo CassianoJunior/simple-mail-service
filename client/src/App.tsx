@@ -1,9 +1,9 @@
 import { MailOpen } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { MailDetails } from './components/MailDetails';
-import { MailList, MessageProps } from './components/MailList';
+import { MailList } from './components/MailList';
 import { Sidebar } from './components/Sidebar';
-import { useUserContext } from './contexts/UserContext';
+import { MessageProps, useUserContext } from './contexts/UserContext';
 
 export type SectionTitle = 'Inbox' | 'Sent';
 
@@ -14,8 +14,8 @@ const App = () => {
     MessageProps | undefined
   >(undefined);
 
-  const { user } = useUserContext();
-  console.log(user.id);
+  const { user, handleUserLoginRequest } = useUserContext();
+  console.log(user);
 
   const handleDataFeched = useCallback(async () => {
     const response = await fetch(
@@ -33,7 +33,9 @@ const App = () => {
   }, [setMessages]);
 
   useEffect(() => {
-    handleDataFeched();
+    // handleDataFeched();
+
+    handleUserLoginRequest('cassiano@mail.com');
   }, []);
 
   const handleClickInboxSection = useCallback(() => {
@@ -54,7 +56,6 @@ const App = () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        ...message,
         isRead: true,
       }),
     });
@@ -64,10 +65,10 @@ const App = () => {
   };
 
   const countUnreadMessages = (messages: MessageProps[]) => {
-    const unreadMessages = messages.filter(
-      (message) => !message.isRead && message.recipientId === user.id
-    );
-    return unreadMessages.length;
+    // const unreadMessages = messages.filter(
+    //   (message) => !message.isRead && message.recipientId === user.id
+    // );
+    return 0;
   };
 
   return (

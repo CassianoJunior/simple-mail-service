@@ -3,11 +3,21 @@ interface CreateParticipantsOnMessageData {
   messageId: string;
   senderId: string;
   recipientId: string;
+  isRead: boolean;
+  isDeleted: boolean;
 }
 
 interface CreateParticipantsOnMessageDataFromMessage {
   senderId: string;
   recipientId: string;
+}
+
+interface UpdateParticipantsOnMessageData {
+  messageId?: string;
+  senderId?: string;
+  recipientId?: string;
+  isRead?: boolean;
+  isDeleted?: boolean;
 }
 
 interface IParticipantsOnMessageRepository {
@@ -20,7 +30,7 @@ interface IParticipantsOnMessageRepository {
   ): Promise<ParticipantsOnMessage>;
   update(
     participantsOnMessageId: string,
-    participantsOnMessageData: CreateParticipantsOnMessageData
+    participantsOnMessageData: UpdateParticipantsOnMessageData
   ): Promise<void>;
   delete(participantsOnMessageId: string): Promise<void>;
 }
@@ -29,4 +39,5 @@ export {
   IParticipantsOnMessageRepository,
   CreateParticipantsOnMessageData,
   CreateParticipantsOnMessageDataFromMessage,
+  UpdateParticipantsOnMessageData,
 };

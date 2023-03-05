@@ -2,6 +2,7 @@ import { prisma } from '../../../utils/prisma';
 import {
   CreateParticipantsOnMessageData,
   IParticipantsOnMessageRepository,
+  UpdateParticipantsOnMessageData,
 } from '../../IParticipantsOnMessageRepository';
 
 class PrismaParticipantsOnMessageRepository
@@ -68,8 +69,9 @@ class PrismaParticipantsOnMessageRepository
 
   async update(
     participantsOnMessageId: string,
-    participantsOnMessageData: CreateParticipantsOnMessageData
+    participantsOnMessageData: UpdateParticipantsOnMessageData
   ) {
+    console.log(participantsOnMessageData);
     await prisma.participantsOnMessage.update({
       where: {
         id: participantsOnMessageId,
