@@ -10,7 +10,7 @@ const routes: Record<string, CallableFunction> = {
   '/messages:get': messageController.getMessage,
   '/messages:post': messageController.createMessage,
   '/messages:put': messageController.updateMessage,
-  '/messages:delete': messageController.deleteMessage,
+  '/messages:delete': messageController.softDeleteMessage,
   '/readMessage:put': messageController.readMessage,
 
   default: async (req: IncomingMessage, res: ServerResponse) => {

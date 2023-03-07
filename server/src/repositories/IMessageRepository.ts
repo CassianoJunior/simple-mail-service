@@ -9,6 +9,7 @@ interface CreateMessageData {
 interface UpdateMessageData {
   body?: string;
   subject?: string;
+  updatedAt?: Date;
 }
 
 interface IMessageRepository {

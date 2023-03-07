@@ -36,7 +36,8 @@ class MessageService {
         messageId: message.id,
         senderId: participantsData.senderId,
         recipientId: participantsData.recipientId,
-        isDeleted: false,
+        senderDeleted: false,
+        recipientDeleted: false,
         isRead: false,
       });
 
@@ -46,14 +47,22 @@ class MessageService {
   async update(
     id: string,
     data: UpdateMessageData
-  ): Promise<Either<Error, void>> {
+  ): Promise<Either<Error, [void, void]>> {
     const participantsOnMessage =
       await this.participantsOnMessageRepository.find(id);
 
     if (!participantsOnMessage) return left(new Error('Message not found'));
 
     return right(
-      await this.messageRepository.update(participantsOnMessage.messageId, data)
+      await Promise.all([
+        this.messageRepository.update(participantsOnMessage.messageId, {
+          ...data,
+          updatedAt: new Date(),
+        }),
+        this.participantsOnMessageRepository.update(id, {
+          updatedAt: new Date(),
+        }),
+      ])
     );
   }
 

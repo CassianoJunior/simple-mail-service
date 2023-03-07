@@ -156,6 +156,37 @@ const messageController = {
       }
     }
   },
+
+  softDeleteMessage: async (req: IncomingMessage, res: ServerResponse) => {
+    try {
+      const urlSchema = z.object({
+        id: z.string(),
+        who: z.enum(['sender', 'recipient']),
+      });
+
+      const { id, who } = urlSchema.parse(getUrlParams(req.url));
+
+      const result = await participantOnMessageService.softDeleteMessage(
+        id,
+        who
+      );
+
+      if (result.isLeft())
+        return res
+          .writeHead(400, DEFAULT_HEADER)
+          .end(result.value.message.toString());
+
+      return res.writeHead(204, DEFAULT_HEADER).end();
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        const errorMessage = handle(err);
+        res.writeHead(400, DEFAULT_HEADER);
+        res.end(`${errorMessage} in url`);
+      } else {
+        handleError(res)(err);
+      }
+    }
+  },
 };
 
 export { messageController };

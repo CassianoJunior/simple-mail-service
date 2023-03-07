@@ -4,7 +4,8 @@ interface CreateParticipantsOnMessageData {
   senderId: string;
   recipientId: string;
   isRead: boolean;
-  isDeleted: boolean;
+  senderDeleted: boolean;
+  recipientDeleted: boolean;
 }
 
 interface CreateParticipantsOnMessageDataFromMessage {
@@ -17,7 +18,9 @@ interface UpdateParticipantsOnMessageData {
   senderId?: string;
   recipientId?: string;
   isRead?: boolean;
-  isDeleted?: boolean;
+  senderDeleted?: boolean;
+  recipientDeleted?: boolean;
+  updatedAt?: Date;
 }
 
 interface IParticipantsOnMessageRepository {

@@ -8,6 +8,7 @@ interface CreateUserData {
 interface UpdateUserData {
   name?: string;
   email?: string;
+  updatedAt?: Date;
 }
 
 interface IUserRepository {
