@@ -134,18 +134,18 @@ const ConfirmDeleteModal = ({
       </AlertDialog.Trigger>
       <AlertDialog.Portal>
         <AlertDialog.Overlay className="inset-0 fixed animate-[overlayShow_150ms_cubic-bezier(0.16,1,0.3,1)]" />
-        <AlertDialog.Content className="bg-[white] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] fixed -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[500px] animate-[contentShow_150ms_cubic-bezier(0.16,1,0.3,1)] p-6 rounded-md left-1/2 top-1/2">
-          <AlertDialog.Title className="text-lg font-semibold">
+        <AlertDialog.Content className="bg-zinc-600 shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] fixed -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[500px] animate-[contentShow_150ms_cubic-bezier(0.16,1,0.3,1)] p-6 rounded-md left-1/2 top-1/2">
+          <AlertDialog.Title className="text-lg font-semibold text-white">
             Are you sure you want to delete this message?
           </AlertDialog.Title>
-          <AlertDialog.Description className="py-4">
+          <AlertDialog.Description className="py-4 text-white">
             This action cannot be undone.
           </AlertDialog.Description>
           <div className="flex gap-4 w-full flex-end">
             <AlertDialog.Cancel>
               <div
                 onClick={() => setOpen(false)}
-                className="bg-zinc-500 hover:bg-zinc-600 text-white font-semibold py-2 px-4 rounded"
+                className="bg-zinc-500 hover:bg-zinc-700 text-white font-semibold py-2 px-4 rounded"
               >
                 Cancel
               </div>

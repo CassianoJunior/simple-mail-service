@@ -6,7 +6,7 @@ import { SidebarHeader } from './SidebarHeader';
 
 interface SidebarProps {
   activeSection: SectionTitle;
-  unreadMessages: number;
+  unreadMessages?: number;
   handleClickInboxSection: () => void;
   handleClickSentSection: () => void;
 }
@@ -30,7 +30,7 @@ const Sidebar = ({
         title="Inbox"
         Icon={<Inbox color="#2DA4FF" strokeWidth={1.5} size={16} />}
         active={activeSection === 'Inbox'}
-        bagdeCount={0}
+        bagdeCount={unreadMessages}
         onClick={handleClickInboxSection}
       />
       <SidebarButton

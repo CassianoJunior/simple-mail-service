@@ -11,7 +11,7 @@ interface MailListProps {
   sectionTitle: string;
   selectedMessage: MessageProps | undefined;
   user: UserProps;
-  unreadMessages: number;
+  unreadMessages?: number;
   handleClickMessage: (id: string) => void;
   isWritingMail: boolean;
   toggleWritingMail: () => void;
@@ -46,13 +46,15 @@ const MailList = ({
       : getMessages(user.messagesSent);
 
   return (
-    <div className="h-screen py-2 px-4 bg-zinc-700 border-l-[1px] border-r-[1px] border-zinc-900">
-      <header className="mb-4 flex items-center justify-between">
+    <div className="h-screen py-2 px-4 bg-zinc-700 border-l-[1px] border-r-[1px] border-zinc-900 pb-20">
+      <header className="mb-4 flex items-center justify-between bg-zinc-700">
         <div className="flex flex-col">
           <h2 className="text-lg text-white font-thin">{sectionTitle}</h2>
           <p className="text-xs text-gray-400">
             {messages.length} messages
-            {sectionTitle === 'Inbox' ? `, ${unreadMessages} unread` : ''}
+            {sectionTitle === 'Inbox'
+              ? `${!!unreadMessages ? `, ${unreadMessages} unread` : ''}`
+              : ''}
           </p>
         </div>
         <button
@@ -63,7 +65,7 @@ const MailList = ({
           <span className="text-sm text-white">Write email</span>
         </button>
       </header>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 px-2 max-h-full overflow-y-scroll scrollbar-track-transparent scrollbar-thin scrollbar-thumb-zinc-600">
         {messages
           .sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1))
           .map((message) => (

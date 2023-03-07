@@ -35,7 +35,15 @@ const MailCard = ({
     >
       <div
         className={`flex flex-col justify-between w-full h-[5.5rem] p-4
-        ${isSelected ? '' : 'border-b-2 border-zinc-500'}`}
+        ${
+          isSelected
+            ? ''
+            : `${
+                !message.isRead
+                  ? 'border-b-2 border-[#3B82F7]'
+                  : 'border-b-2 border-zinc-500'
+              }`
+        }`}
       >
         <div className="flex justify-between">
           <div className="flex flex-col w-full">

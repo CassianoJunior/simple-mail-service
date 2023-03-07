@@ -12,7 +12,6 @@ const SidebarButton = ({
   bagdeCount,
   ...rest
 }: SidebarButtonProps) => {
-  console.log(bagdeCount);
   return (
     <button
       {...rest}
@@ -22,8 +21,8 @@ const SidebarButton = ({
     >
       <div className="mr-2">{Icon}</div>
       <h2 className="font-inter font-semibold text-sm">{title}</h2>
-      {bagdeCount && bagdeCount !== 0 && (
-        <div className="flex items-center justify-center absolute top-2 right-2 h-4 px-2 text-xs text-white bg-zinc-700 bg-opacity-40 rounded-full">
+      {bagdeCount && (
+        <div className="flex items-center justify-center absolute right-2 h-4 px-2 text-xs text-white bg-zinc-700 bg-opacity-40 rounded-full">
           {bagdeCount}
         </div>
       )}

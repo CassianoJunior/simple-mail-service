@@ -17,7 +17,7 @@ const App = () => {
   const { user, handleUserLoginRequest, messages } = useUserContext();
 
   useEffect(() => {
-    handleUserLoginRequest('cassianojr@mail.com');
+    handleUserLoginRequest('cassiano@mail.com');
   }, []);
 
   const handleClickInboxSection = useCallback(() => {
@@ -63,7 +63,7 @@ const App = () => {
   const countUnreadMessages = (messages: MessageProps[]) => {
     const unreadMessages = messages.filter((message) => !message.isRead);
 
-    return unreadMessages.length;
+    return unreadMessages.length === 0 ? undefined : unreadMessages.length;
   };
 
   return user ? (
