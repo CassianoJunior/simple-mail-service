@@ -187,6 +187,48 @@ const messageController = {
       }
     }
   },
+
+  replyMessage: async (req: IncomingMessage, res: ServerResponse) => {
+    for await (const data of req) {
+      try {
+        const messageSchema = z.object({
+          message: z.object({
+            body: z.string(),
+            subject: z.string(),
+            isRead: z.boolean().default(false),
+            isDeleted: z.boolean().default(false),
+          }),
+          from: z.string(),
+          to: z.string(),
+          replyTo: z.string(),
+        });
+
+        const messageParsed = messageSchema.parse(JSON.parse(data.toString()));
+
+        const result = await participantOnMessageService.replyToMessage(
+          messageParsed.message,
+          {
+            senderId: messageParsed.from,
+            recipientId: messageParsed.to,
+          },
+          messageParsed.replyTo
+        );
+
+        if (result.isLeft())
+          return res.writeHead(400, DEFAULT_HEADER).end(result.value.message);
+
+        return res.writeHead(201, DEFAULT_HEADER).end();
+      } catch (err) {
+        if (err instanceof z.ZodError) {
+          const errorMessage = handle(err);
+          res.writeHead(400, DEFAULT_HEADER);
+          res.end(errorMessage);
+        } else {
+          handleError(res)(err);
+        }
+      }
+    }
+  },
 };
 
 export { messageController };

@@ -6,6 +6,7 @@ interface CreateParticipantsOnMessageData {
   isRead: boolean;
   senderDeleted: boolean;
   recipientDeleted: boolean;
+  replyToId?: string;
 }
 
 interface CreateParticipantsOnMessageDataFromMessage {
@@ -18,6 +19,7 @@ interface UpdateParticipantsOnMessageData {
   senderId?: string;
   recipientId?: string;
   isRead?: boolean;
+  replyToId?: string;
   senderDeleted?: boolean;
   recipientDeleted?: boolean;
   updatedAt?: Date;

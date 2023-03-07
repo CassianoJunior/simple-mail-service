@@ -1,3 +1,6 @@
+import { Message } from './Message';
+import { User } from './User';
+
 export interface ParticipantsOnMessage {
   id: string;
   senderId: string;
@@ -6,6 +9,10 @@ export interface ParticipantsOnMessage {
   isRead: boolean;
   senderDeleted: boolean;
   recipientDeleted: boolean;
+  replyToId?: string;
+  sender?: User;
+  recipient?: User;
+  message?: Message;
   createdAt: Date;
   updatedAt: Date;
 }

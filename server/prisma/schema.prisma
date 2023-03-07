@@ -45,7 +45,7 @@ model ParticipantsOnMessage {
   messageId   String
   senderId    String
   recipientId String
-  replayId    String?
+  replyToId   String?
 
   message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   sender    User    @relation(fields: [senderId], references: [id], name: "SentMessages", onDelete: Cascade, onUpdate: Cascade)

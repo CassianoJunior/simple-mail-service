@@ -1,5 +1,12 @@
-import { IMessageRepository } from '../repositories/IMessageRepository';
-import { IParticipantsOnMessageRepository } from '../repositories/IParticipantsOnMessageRepository';
+import { ParticipantsOnMessage } from '../entities/ParticipantsOnMessages';
+import {
+  CreateMessageData,
+  IMessageRepository,
+} from '../repositories/IMessageRepository';
+import {
+  CreateParticipantsOnMessageDataFromMessage,
+  IParticipantsOnMessageRepository,
+} from '../repositories/IParticipantsOnMessageRepository';
 import { Either, left, right } from './../errors/either';
 
 class ParticipantsOnMessageService {
@@ -52,6 +59,36 @@ class ParticipantsOnMessageService {
     }
 
     return right((() => {})());
+  }
+
+  async replyToMessage(
+    data: CreateMessageData,
+    participantsData: CreateParticipantsOnMessageDataFromMessage,
+    messageId: string
+  ): Promise<Either<Error, ParticipantsOnMessage>> {
+    const messageExists = await this.repository.find(messageId);
+
+    if (!messageExists) return left(new Error('Message not found'));
+
+    const { sender, message, recipient, ...participantsOnMessageRest } =
+      messageExists;
+
+    const replyMessage = await this.messageRepository.create(
+      data,
+      participantsData
+    );
+
+    const replyParticipantsOnMessage = await this.repository.create({
+      messageId: replyMessage.id,
+      senderId: participantsData.senderId,
+      recipientId: participantsData.recipientId,
+      isRead: false,
+      senderDeleted: false,
+      recipientDeleted: false,
+      replyToId: messageId,
+    });
+
+    return right(replyParticipantsOnMessage);
   }
 }
 

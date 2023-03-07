@@ -1,20 +1,12 @@
 import { MailPlus } from 'lucide-react';
-import {
-  MessageProps,
-  ParticipantsOnMessageProps,
-  UserProps,
-  useUserContext,
-} from '../contexts/UserContext';
+import { MessageProps, useUserContext } from '../contexts/UserContext';
 import { MailCard } from './MailCard';
-import { NewMail } from './NewMail';
 
 interface MailListProps {
   sectionTitle: string;
   selectedMessage: MessageProps | undefined;
-  user: UserProps;
   unreadMessages?: number;
   handleClickMessage: (id: string) => void;
-  isWritingMail: boolean;
   toggleWritingMail: () => void;
 }
 
@@ -22,25 +14,9 @@ const MailList = ({
   sectionTitle,
   selectedMessage,
   handleClickMessage,
-  user,
   unreadMessages,
   toggleWritingMail,
-  isWritingMail,
 }: MailListProps) => {
-  const getMessages = (
-    participantsOnMessages: ParticipantsOnMessageProps[]
-  ) => {
-    const messages = participantsOnMessages.map((participantOnMessage) => {
-      const message = participantOnMessage.message;
-      message.participants = participantsOnMessages;
-      message.isRead = participantOnMessage.isRead;
-
-      return message;
-    });
-
-    return messages;
-  };
-
   const { messages: messagesFormmated } = useUserContext();
 
   const messages =
@@ -81,8 +57,6 @@ const MailList = ({
             />
           ))}
       </div>
-
-      {isWritingMail && <NewMail toggleWritingMail={toggleWritingMail} />}
     </div>
   );
 };

@@ -9,12 +9,14 @@ interface MailDetailsProps {
   message: MessageProps;
   activeSection: SectionTitle;
   setSelectedMessage: (message: MessageProps | undefined) => void;
+  toggleIsReplying: () => void;
 }
 
 const MailDetails = ({
   message,
   activeSection,
   setSelectedMessage,
+  toggleIsReplying,
 }: MailDetailsProps) => {
   const { user, handleUserLoginRequest } = useUserContext();
 
@@ -26,7 +28,12 @@ const MailDetails = ({
     return participant;
   };
 
-  const handleReply = () => {};
+  const handleReply = (message: MessageProps) => {
+    toggleIsReplying();
+    const participant = getParticipant(message);
+
+    if (!participant) return;
+  };
 
   const handleForward = () => {};
 
@@ -61,6 +68,7 @@ const MailDetails = ({
       <div className="flex flex-col justify-between w-full h-24 p-4">
         <div className="w-full justify-center items-center flex gap-4">
           <div
+            onClick={() => handleReply(message)}
             title="Reply"
             className="p-2 hover:bg-gray-600 hover:cursor-pointer rounded-full flex items-center justify-center"
           >
@@ -96,7 +104,9 @@ const MailDetails = ({
             </p>
           </div>
         </div>
-        <div className="text-md text-white py-4 px-6">{message.body}</div>
+        <div className="text-md text-white py-4 px-6 whitespace-pre-line">
+          {message.body}
+        </div>
       </div>
       <ToastContainer
         position="top-right"

@@ -1,13 +1,19 @@
 import { FileText, Mail, Send, Subtitles, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
-import { UserProps, useUserContext } from '../contexts/UserContext';
+import {
+  MessageProps,
+  UserProps,
+  useUserContext,
+} from '../contexts/UserContext';
 
 interface NewMailProps {
   toggleWritingMail: () => void;
+  isReplying: boolean;
+  message?: MessageProps;
 }
 
-const NewMail = ({ toggleWritingMail }: NewMailProps) => {
+const NewMail = ({ toggleWritingMail, isReplying, message }: NewMailProps) => {
   const { user, handleUserLoginRequest } = useUserContext();
   const [recipient, setRecipient] = useState('');
   const [subject, setSubject] = useState('');
@@ -57,6 +63,14 @@ const NewMail = ({ toggleWritingMail }: NewMailProps) => {
       return toast.success('Message sent');
     }
   };
+
+  useEffect(() => {
+    if (isReplying) {
+      setRecipient(message?.participants[0].sender.email || '');
+      setSubject(`Re: ${message?.subject}`);
+      setBody(`\n\n\n${message?.body}`);
+    }
+  }, []);
 
   return (
     <div className="h-[36rem] w-[40rem] flex flex-col gap-4 bg-gray-600 rounded-xl absolute bottom-2 right-2 p-4">
