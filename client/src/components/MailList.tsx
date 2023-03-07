@@ -3,6 +3,7 @@ import {
   MessageProps,
   ParticipantsOnMessageProps,
   UserProps,
+  useUserContext,
 } from '../contexts/UserContext';
 import { MailCard } from './MailCard';
 import { NewMail } from './NewMail';
@@ -40,10 +41,12 @@ const MailList = ({
     return messages;
   };
 
+  const { messages: messagesFormmated } = useUserContext();
+
   const messages =
     sectionTitle === 'Inbox'
-      ? getMessages(user.messagesReceived)
-      : getMessages(user.messagesSent);
+      ? messagesFormmated.messagesReceived
+      : messagesFormmated.messagesSent;
 
   return (
     <div className="h-screen py-2 px-4 bg-zinc-700 border-l-[1px] border-r-[1px] border-zinc-900 pb-20">

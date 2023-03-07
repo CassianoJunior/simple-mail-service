@@ -9,7 +9,8 @@ export type ParticipantsOnMessageProps = {
   sender: UserProps;
   recipient: UserProps;
   isRead: boolean;
-  isDeleted: boolean;
+  senderDeleted: boolean;
+  recipientDeleted: boolean;
   createdAt: string;
   updatedAt: string;
 };
@@ -73,14 +74,23 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
   };
 
   const formatUserMessages = (user: UserProps) => {
-    const messagesSent = user.messagesSent.map((message) => {
+    const withoutDeletedSentMessages = user.messagesSent.filter(
+      (participant) => participant.senderDeleted === false
+    );
+    const withoutDeletedReceivedMessages = user.messagesReceived.filter(
+      (participant) => participant.recipientDeleted === false
+    );
+
+    const messagesSent = withoutDeletedSentMessages.map((message) => {
       const msg = message.message;
+      msg.participants = [message];
       msg.isRead = message.isRead;
 
       return msg;
     });
-    const messagesReceived = user.messagesReceived.map((message) => {
+    const messagesReceived = withoutDeletedReceivedMessages.map((message) => {
       const msg = message.message;
+      msg.participants = [message];
       msg.isRead = message.isRead;
 
       return msg;

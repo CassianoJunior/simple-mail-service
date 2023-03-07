@@ -35,8 +35,10 @@ const MailDetails = ({
 
     if (!participant) return;
 
+    const who = participant.senderId === user?.id ? 'sender' : 'recipient';
+
     const response = await fetch(
-      `http://localhost:3000/messages?id=${participant.id}`,
+      `http://localhost:3000/messages?id=${participant.id}&who=${who}`,
       {
         method: 'DELETE',
         headers: {
@@ -45,7 +47,7 @@ const MailDetails = ({
       }
     );
 
-    if (response.status === 202) {
+    if (response.status === 204) {
       toast.success('Message deleted');
       setSelectedMessage(undefined);
       return handleUserLoginRequest(user?.email || '');

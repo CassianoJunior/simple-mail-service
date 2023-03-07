@@ -17,7 +17,7 @@ const App = () => {
   const { user, handleUserLoginRequest, messages } = useUserContext();
 
   useEffect(() => {
-    handleUserLoginRequest('cassiano@mail.com');
+    handleUserLoginRequest('cassianojr@mail.com');
   }, []);
 
   const handleClickInboxSection = useCallback(() => {
