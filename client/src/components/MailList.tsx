@@ -51,8 +51,8 @@ const MailList = ({
         <div className="flex flex-col">
           <h2 className="text-lg text-white font-thin">{sectionTitle}</h2>
           <p className="text-xs text-gray-400">
-            {messages.length} messages{' '}
-            {sectionTitle === 'Inbox' ? `${unreadMessages} unread` : ''}
+            {messages.length} messages
+            {sectionTitle === 'Inbox' ? `, ${unreadMessages} unread` : ''}
           </p>
         </div>
         <button

@@ -53,6 +53,7 @@ const NewMail = ({ toggleWritingMail }: NewMailProps) => {
       setBody('');
       toggleWritingMail();
       handleUserLoginRequest(user?.email || '');
+
       return toast.success('Message sent');
     }
   };

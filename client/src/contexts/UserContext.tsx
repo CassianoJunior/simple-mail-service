@@ -73,10 +73,18 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
   };
 
   const formatUserMessages = (user: UserProps) => {
-    const messagesSent = user.messagesSent.map((message) => message.message);
-    const messagesReceived = user.messagesReceived.map(
-      (message) => message.message
-    );
+    const messagesSent = user.messagesSent.map((message) => {
+      const msg = message.message;
+      msg.isRead = message.isRead;
+
+      return msg;
+    });
+    const messagesReceived = user.messagesReceived.map((message) => {
+      const msg = message.message;
+      msg.isRead = message.isRead;
+
+      return msg;
+    });
 
     setMessagesFormatted({ messagesSent, messagesReceived });
   };
