@@ -9,13 +9,12 @@ class ParticipantsOnMessageService {
 
     if (!participantsOnMessage) return left(new Error('Message not found'));
 
-    delete participantsOnMessage.message;
-    delete participantsOnMessage.sender;
-    delete participantsOnMessage.recipient;
+    const { sender, message, recipient, ...participantsOnMessageRest } =
+      participantsOnMessage;
 
     return right(
       await this.repository.update(id, {
-        ...participantsOnMessage,
+        ...participantsOnMessageRest,
         isRead: true,
       })
     );

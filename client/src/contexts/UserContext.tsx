@@ -5,6 +5,11 @@ export type ParticipantsOnMessageProps = {
   senderId: string;
   recipientId: string;
   messageId: string;
+  message: MessageProps;
+  sender: UserProps;
+  recipient: UserProps;
+  isRead: boolean;
+  isDeleted: boolean;
   createdAt: string;
   updatedAt: string;
 };
@@ -13,9 +18,9 @@ export type MessageProps = {
   id: string;
   subject: string;
   body: string;
-  isRead: boolean;
   createdAt: string;
   updatedAt: string;
+  isRead: boolean;
   participants: ParticipantsOnMessageProps[];
 };
 
@@ -27,20 +32,28 @@ export type UserProps = {
   messagesReceived: ParticipantsOnMessageProps[];
 };
 
-interface UserContextProps {
-  user: UserProps;
-  setUser: (user: UserProps) => void;
-  handleUserLoginRequest: (email: string) => void;
-}
-
 const UserContext = createContext<UserContextProps | undefined>(undefined);
 
 interface UserProviderProps {
   children: React.ReactNode;
 }
 
+interface MessageFormattedProps {
+  messagesSent: MessageProps[];
+  messagesReceived: MessageProps[];
+}
+
+interface UserContextProps {
+  user: UserProps | undefined;
+  messages: MessageFormattedProps;
+  setUser: (user: UserProps) => void;
+  handleUserLoginRequest: (email: string) => void;
+}
+
 const UserContextProvider = ({ children }: UserProviderProps) => {
-  const [user, setUser] = useState<UserProps>({} as UserProps);
+  const [user, setUser] = useState<UserProps | undefined>(undefined);
+  const [messagesFormatted, setMessagesFormatted] =
+    useState<MessageFormattedProps>({ messagesReceived: [], messagesSent: [] });
 
   const handleUserLoginRequest = (email: string) => {
     fetch(`http://localhost:3000/users?email=${email}`, {
@@ -51,13 +64,26 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
     }).then((response) =>
       response
         .json()
-        .then((data) => setUser(data))
+        .then((data) => {
+          setUser(data);
+          formatUserMessages(data);
+        })
         .catch((err) => console.log(err))
     );
   };
 
+  const formatUserMessages = (user: UserProps) => {
+    const messagesSent = user.messagesSent.map((message) => message.message);
+    const messagesReceived = user.messagesReceived.map(
+      (message) => message.message
+    );
+
+    setMessagesFormatted({ messagesSent, messagesReceived });
+  };
+
   const contextValue = {
     user,
+    messages: messagesFormatted,
     setUser,
     handleUserLoginRequest,
   };

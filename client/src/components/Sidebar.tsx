@@ -23,8 +23,8 @@ const Sidebar = ({
     <div className="h-screen px-2 bg-zinc-900 shadow-[0,_4px,_30px,_rgba(0,_0,_0,_0.1)] bg-opacity-40 backdrop-blur-md flex flex-col gap-1">
       <SidebarHeader
         icon={<User color="#2DA4FF" strokeWidth={1.5} size={24} />}
-        name={user.name}
-        email={user.email}
+        name={user?.name}
+        email={user?.email}
       />
       <SidebarButton
         title="Inbox"

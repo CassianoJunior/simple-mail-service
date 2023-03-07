@@ -138,9 +138,12 @@ const messageController = {
       const { id } = urlSchema.parse(getUrlParams(req.url));
 
       const result = await participantOnMessageService.readMessage(id);
+      console.log(result);
 
       if (result.isLeft())
-        return res.writeHead(400, DEFAULT_HEADER).end(result.value.message);
+        return res
+          .writeHead(400, DEFAULT_HEADER)
+          .end(result.value.message.toString());
 
       return res.writeHead(204, DEFAULT_HEADER).end();
     } catch (err) {

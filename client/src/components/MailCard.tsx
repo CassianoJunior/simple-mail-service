@@ -1,5 +1,4 @@
 import moment from 'moment';
-import { useEffect, useState } from 'react';
 import { MessageProps, useUserContext } from '../contexts/UserContext';
 
 interface MailCardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -15,22 +14,17 @@ const MailCard = ({
   ...rest
 }: MailCardProps) => {
   const { user } = useUserContext();
-  const [recipientName, setRecipientName] = useState<string>('');
 
-  const getRecipientName = async (id: string) => {
-    const response = await fetch(`http://localhost:3000/users/${id}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    const data = await response.json();
-    setRecipientName(data.name);
+  const getParticipant = (
+    message: MessageProps,
+    who: 'recipient' | 'sender'
+  ) => {
+    const participant = message.participants.find(
+      (participant) => message.id === participant.messageId
+    );
+
+    return who === 'sender' ? participant?.sender : participant?.recipient;
   };
-
-  useEffect(() => {
-    // getRecipientName(message.recipientId);
-  }, []);
 
   return (
     <div
@@ -46,10 +40,17 @@ const MailCard = ({
         <div className="flex justify-between">
           <div className="flex flex-col w-full">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm text-white font-semibold">
-                {sectionTitleActive === 'Inbox'
-                  ? user.name
-                  : `To: ${recipientName}`}
+              <h3 className="text-sm text-white">
+                {sectionTitleActive === 'Inbox' ? (
+                  <p>{getParticipant(message, 'sender')?.name}</p>
+                ) : (
+                  <p>
+                    To:{' '}
+                    <span className="font-semibold">
+                      {getParticipant(message, 'recipient')?.name}
+                    </span>
+                  </p>
+                )}
               </h3>
               <p className="text-[0.65rem] text-gray-400">
                 {moment(message.createdAt).format('MMM D, YYYY h:mm A')}

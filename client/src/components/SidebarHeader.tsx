@@ -1,7 +1,7 @@
 interface SidebarHeaderProps {
   icon: React.ReactNode;
-  name: string;
-  email: string;
+  name: string | undefined;
+  email: string | undefined;
 }
 
 const SidebarHeader = ({ icon, name, email }: SidebarHeaderProps) => {

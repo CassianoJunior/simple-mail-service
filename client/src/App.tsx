@@ -9,86 +9,86 @@ export type SectionTitle = 'Inbox' | 'Sent';
 
 const App = () => {
   const [activeSection, setActiveSection] = useState<SectionTitle>('Inbox');
-  const [messages, setMessages] = useState<MessageProps[]>([]);
+  const [isWritingMail, setIsWritingMail] = useState<boolean>(false);
   const [selectedMessage, setSelectedMessage] = useState<
     MessageProps | undefined
   >(undefined);
 
-  const { user, handleUserLoginRequest } = useUserContext();
-  console.log(user);
-
-  const handleDataFeched = useCallback(async () => {
-    const response = await fetch(
-      `http://localhost:3000/userMessages/${user.id}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-
-    const messages = await response.json();
-    setMessages(messages);
-  }, [setMessages]);
+  const { user, handleUserLoginRequest, messages } = useUserContext();
 
   useEffect(() => {
-    // handleDataFeched();
-
     handleUserLoginRequest('cassiano@mail.com');
   }, []);
 
   const handleClickInboxSection = useCallback(() => {
     setActiveSection('Inbox');
+    setSelectedMessage(undefined);
   }, [activeSection]);
 
   const handleClickSentSection = useCallback(() => {
     setActiveSection('Sent');
+    setSelectedMessage(undefined);
   }, [activeSection]);
 
   const handleClickMessage = async (id: string) => {
-    const message = messages.find((message) => message.id === id);
+    const allMessages = [
+      ...messages.messagesReceived,
+      ...messages.messagesSent,
+    ];
+    const message = allMessages.find((message) => message.id === id);
     setSelectedMessage(message);
 
-    const response = await fetch(`http://localhost:3000/messages/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        isRead: true,
-      }),
+    if (message?.isRead) return;
+
+    const participant = user?.messagesReceived.find((participantOnMessage) => {
+      return participantOnMessage.messageId === id;
     });
 
-    const updatedMessage: MessageProps[] = await response.json();
-    console.log(updatedMessage.find((message) => message.id === id));
+    if (participant && message) {
+      await fetch(`http://localhost:3000/readMessage?id=${participant.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      message.isRead = true;
+      participant.isRead = true;
+    }
   };
+
+  const toggleWritingMail = useCallback(() => {
+    setIsWritingMail((state) => !state);
+  }, [isWritingMail]);
 
   const countUnreadMessages = (messages: MessageProps[]) => {
-    // const unreadMessages = messages.filter(
-    //   (message) => !message.isRead && message.recipientId === user.id
-    // );
-    return 0;
+    const unreadMessages = messages.filter((message) => !message.isRead);
+
+    return unreadMessages.length;
   };
 
-  return (
+  return user ? (
     <div className="grid grid-cols-[3fr_5fr_12fr]">
       <Sidebar
         activeSection={activeSection}
         handleClickInboxSection={handleClickInboxSection}
         handleClickSentSection={handleClickSentSection}
-        unreadMessages={countUnreadMessages(messages)}
+        unreadMessages={countUnreadMessages(messages.messagesReceived)}
       />
       <MailList
         sectionTitle={activeSection}
-        messages={messages}
         selectedMessage={selectedMessage}
-        unreadMessages={countUnreadMessages(messages)}
+        unreadMessages={countUnreadMessages(messages.messagesReceived)}
         handleClickMessage={handleClickMessage}
+        toggleWritingMail={toggleWritingMail}
+        isWritingMail={isWritingMail}
         user={user}
       />
       {selectedMessage ? (
-        <MailDetails message={selectedMessage} activeSection={activeSection} />
+        <MailDetails
+          message={selectedMessage}
+          setSelectedMessage={setSelectedMessage}
+          activeSection={activeSection}
+        />
       ) : (
         <div className="h-screen flex flex-col gap-4 items-center justify-center text-gray-400 bg-zinc-700">
           <MailOpen color="#9ca3af" size={96} strokeWidth={0.8} />
@@ -98,6 +98,8 @@ const App = () => {
         </div>
       )}
     </div>
+  ) : (
+    <div>Loading</div>
   );
 };
 
