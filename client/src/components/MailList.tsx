@@ -44,7 +44,7 @@ const MailList = ({
           <span className="text-sm text-white">Write email</span>
         </button>
       </header>
-      <div className="flex flex-col gap-2 px-2 max-h-full overflow-y-scroll scrollbar-track-transparent scrollbar-thin scrollbar-thumb-zinc-600">
+      <div className="flex flex-col gap-2 px-2 max-h-full overflow-y-scroll scrollbar-w-1 scrollbar-thumb-rounded-full scrollbar-track-transparent scrollbar-thin scrollbar-thumb-zinc-600">
         {messages
           .sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1))
           .map((message) => (

@@ -1,11 +1,8 @@
 import { FileText, Mail, Send, Subtitles, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
-import {
-  MessageProps,
-  UserProps,
-  useUserContext,
-} from '../contexts/UserContext';
+import { toast } from 'react-toastify';
+import { MessageProps, useUserContext } from '../contexts/UserContext';
+import { api } from '../utils/axios';
 
 interface NewMailProps {
   toggleWritingMail: () => void;
@@ -28,40 +25,35 @@ const NewMail = ({ toggleWritingMail, isReplying, message }: NewMailProps) => {
       return toast.warning('Please fill all fields');
     }
 
-    const responseRecipient = await fetch(
-      `http://localhost:3000/users?email=${recipient}`,
-      {
-        method: 'GET',
-      }
-    );
+    const recipients = recipient.replaceAll(' ', '').split(',');
 
-    if (responseRecipient.status !== 200) {
-      return toast.error('Recipient not found');
-    }
-
-    const recipientData: UserProps = await responseRecipient.json();
-
-    const response = await fetch('http://localhost:3000/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        message: { body, subject },
+    const response = await api
+      .post('/messages', {
+        message: {
+          subject,
+          body,
+        },
         from: user?.id,
-        to: recipientData.id,
-      }),
-    });
+        to: recipients,
+      })
+      .then((res) => {
+        console.log(res.status);
+        if (res.status === 201) {
+          setRecipient('');
+          setSubject('');
+          setBody('');
+          toggleWritingMail();
+          handleUserLoginRequest(user?.email || '');
 
-    if (response.status === 201) {
-      setRecipient('');
-      setSubject('');
-      setBody('');
-      toggleWritingMail();
-      handleUserLoginRequest(user?.email || '');
-
-      return toast.success('Message sent');
-    }
+          toast.success('Message sent');
+          return;
+        } else {
+          return toast.error('Something went wrong');
+        }
+      })
+      .catch((err) => {
+        return toast.error(err.response.data);
+      });
   };
 
   useEffect(() => {
@@ -84,7 +76,7 @@ const NewMail = ({ toggleWritingMail, isReplying, message }: NewMailProps) => {
           />
         </div>
         <h2 className="font-inter text-xl text-white text-semibold">
-          Write new email
+          {`${isReplying ? 'Reply email' : 'Write new email'}`}
         </h2>
       </header>
       <div>
@@ -95,10 +87,11 @@ const NewMail = ({ toggleWritingMail, isReplying, message }: NewMailProps) => {
             </div>
             <input
               type="text"
-              className="border text-sm rounded-lg block w-full pl-10 p-2.5 outline-none bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
+              className="border disabled:cursor-not-allowed text-sm rounded-lg block w-full pl-10 p-2.5 outline-none bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
               placeholder="recipient@email.com"
               value={recipient}
               onChange={(e) => setRecipient(e.target.value)}
+              disabled={isReplying}
             />
           </div>
           <div className="relative">
@@ -139,18 +132,6 @@ const NewMail = ({ toggleWritingMail, isReplying, message }: NewMailProps) => {
           </div>
         </form>
       </div>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-      />
     </div>
   );
 };

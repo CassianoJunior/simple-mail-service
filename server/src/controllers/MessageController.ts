@@ -2,12 +2,14 @@ import { IncomingMessage, ServerResponse } from 'http';
 import z from 'zod';
 import { generateMessageInstance } from '../factories/MessageFactory';
 import { generateParticipantInstance } from '../factories/ParticipantOnMessageFactory';
+import { generateUserInstance } from '../factories/UserFactory';
 import { DEFAULT_HEADER, handleError } from '../utils';
 import { getUrlParams } from '../utils/handleUrlString';
 import { handle } from '../utils/handleZodErrors';
 
 const messageService = generateMessageInstance();
 const participantOnMessageService = generateParticipantInstance();
+const userService = generateUserInstance();
 
 const messageController = {
   getMessage: async (req: IncomingMessage, res: ServerResponse) => {
@@ -42,21 +44,40 @@ const messageController = {
             body: z.string(),
             subject: z.string(),
             isRead: z.boolean().default(false),
-            isDeleted: z.boolean().default(false),
           }),
           from: z.string(),
-          to: z.string(),
+          to: z.array(z.string()),
         });
 
         const messageParsed = messageSchema.parse(JSON.parse(data.toString()));
 
-        const result = await messageService.create(messageParsed.message, {
-          senderId: messageParsed.from,
-          recipientId: messageParsed.to,
+        const recipients = messageParsed.to.map(async (recipient) => {
+          const exists = await userService.findByEmail(recipient);
+
+          if (exists.isLeft()) {
+            res.writeHead(404, DEFAULT_HEADER);
+            res.end(`${recipient} is not found`);
+            return;
+          }
+
+          return exists.value.id;
         });
 
-        if (result.isLeft())
-          return res.writeHead(400, DEFAULT_HEADER).end(result.value.message);
+        const recipientsIds = await Promise.all(recipients);
+
+        if (recipientsIds.some((id) => id === undefined)) return res.end();
+
+        const promiseResults = recipientsIds.map(async (id) => {
+          return messageService.create(messageParsed.message, {
+            senderId: messageParsed.from,
+            recipientId: id,
+          });
+        });
+
+        const results = await Promise.all(promiseResults);
+
+        if (results.some((result) => result.isLeft()))
+          return res.writeHead(400, DEFAULT_HEADER).end();
 
         return res.writeHead(201, DEFAULT_HEADER).end();
       } catch (err) {
@@ -181,7 +202,8 @@ const messageController = {
       if (err instanceof z.ZodError) {
         const errorMessage = handle(err);
         res.writeHead(400, DEFAULT_HEADER);
-        res.end(`${errorMessage} in url`);
+        res.statusMessage = `${errorMessage} in url`;
+        res.end();
       } else {
         handleError(res)(err);
       }
@@ -222,7 +244,9 @@ const messageController = {
         if (err instanceof z.ZodError) {
           const errorMessage = handle(err);
           res.writeHead(400, DEFAULT_HEADER);
-          res.end(errorMessage);
+          res.statusMessage = JSON.stringify(errorMessage);
+          console.log(res);
+          res.end();
         } else {
           handleError(res)(err);
         }

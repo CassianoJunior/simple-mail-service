@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import { SectionTitle } from '../App';
 import { MessageProps, useUserContext } from '../contexts/UserContext';
+import { api } from '../utils/axios';
 interface MailDetailsProps {
   message: MessageProps;
   activeSection: SectionTitle;
@@ -30,9 +31,6 @@ const MailDetails = ({
 
   const handleReply = (message: MessageProps) => {
     toggleIsReplying();
-    const participant = getParticipant(message);
-
-    if (!participant) return;
   };
 
   const handleForward = () => {};
@@ -44,14 +42,8 @@ const MailDetails = ({
 
     const who = participant.senderId === user?.id ? 'sender' : 'recipient';
 
-    const response = await fetch(
-      `http://localhost:3000/messages?id=${participant.id}&who=${who}`,
-      {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
+    const response = await api.delete(
+      `/messages?id=${participant.id}&who=${who}`
     );
 
     if (response.status === 204) {
@@ -68,7 +60,7 @@ const MailDetails = ({
       <div className="flex flex-col justify-between w-full h-24 p-4">
         <div className="w-full justify-center items-center flex gap-4">
           <div
-            onClick={() => handleReply(message)}
+            onClick={toggleIsReplying}
             title="Reply"
             className="p-2 hover:bg-gray-600 hover:cursor-pointer rounded-full flex items-center justify-center"
           >
@@ -108,18 +100,6 @@ const MailDetails = ({
           {message.body}
         </div>
       </div>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-      />
     </div>
   );
 };
@@ -135,45 +115,59 @@ const ConfirmDeleteModal = ({
 }: ConfirmDeleteModalProps) => {
   const [open, setOpen] = useState(false);
   return (
-    <AlertDialog.Root open={open} onOpenChange={setOpen}>
-      <AlertDialog.Trigger>
-        <div
-          title="Delete"
-          className="p-2 hover:bg-gray-600 rounded-full flex items-center justify-center"
-        >
-          <Trash2 color="#2DA4FF" strokeWidth={1.5} size={24} />
-        </div>
-      </AlertDialog.Trigger>
-      <AlertDialog.Portal>
-        <AlertDialog.Overlay className="inset-0 fixed animate-[overlayShow_150ms_cubic-bezier(0.16,1,0.3,1)]" />
-        <AlertDialog.Content className="bg-zinc-600 shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] fixed -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[500px] animate-[contentShow_150ms_cubic-bezier(0.16,1,0.3,1)] p-6 rounded-md left-1/2 top-1/2">
-          <AlertDialog.Title className="text-lg font-semibold text-white">
-            Are you sure you want to delete this message?
-          </AlertDialog.Title>
-          <AlertDialog.Description className="py-4 text-white">
-            This action cannot be undone.
-          </AlertDialog.Description>
-          <div className="flex gap-4 w-full flex-end">
-            <AlertDialog.Cancel>
-              <div
-                onClick={() => setOpen(false)}
-                className="bg-zinc-500 hover:bg-zinc-700 text-white font-semibold py-2 px-4 rounded"
-              >
-                Cancel
-              </div>
-            </AlertDialog.Cancel>
-            <AlertDialog.Action>
-              <div
-                onClick={() => handleDelete(message)}
-                className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded"
-              >
-                Delete
-              </div>
-            </AlertDialog.Action>
+    <>
+      <AlertDialog.Root open={open} onOpenChange={setOpen}>
+        <AlertDialog.Trigger>
+          <div
+            title="Delete"
+            className="p-2 hover:bg-gray-600 rounded-full flex items-center justify-center"
+          >
+            <Trash2 color="#2DA4FF" strokeWidth={1.5} size={24} />
           </div>
-        </AlertDialog.Content>
-      </AlertDialog.Portal>
-    </AlertDialog.Root>
+        </AlertDialog.Trigger>
+        <AlertDialog.Portal>
+          <AlertDialog.Overlay className="inset-0 fixed animate-[overlayShow_150ms_cubic-bezier(0.16,1,0.3,1)]" />
+          <AlertDialog.Content className="bg-zinc-600 shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] fixed -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[500px] animate-[contentShow_150ms_cubic-bezier(0.16,1,0.3,1)] p-6 rounded-md left-1/2 top-1/2">
+            <AlertDialog.Title className="text-lg font-semibold text-white">
+              Are you sure you want to delete this message?
+            </AlertDialog.Title>
+            <AlertDialog.Description className="py-4 text-white">
+              This action cannot be undone.
+            </AlertDialog.Description>
+            <div className="flex gap-4 w-full flex-end">
+              <AlertDialog.Cancel>
+                <div
+                  onClick={() => setOpen(false)}
+                  className="bg-zinc-500 hover:bg-zinc-700 text-white font-semibold py-2 px-4 rounded"
+                >
+                  Cancel
+                </div>
+              </AlertDialog.Cancel>
+              <AlertDialog.Action>
+                <div
+                  onClick={() => handleDelete(message)}
+                  className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded"
+                >
+                  Delete
+                </div>
+              </AlertDialog.Action>
+            </div>
+          </AlertDialog.Content>
+        </AlertDialog.Portal>
+      </AlertDialog.Root>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
+    </>
   );
 };
 

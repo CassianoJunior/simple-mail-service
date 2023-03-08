@@ -28,7 +28,6 @@ class PrismaMessageRepository implements IMessageRepository {
 
   async create(messageData: Message) {
     delete messageData.isRead;
-    delete messageData.isDeleted;
     return await prisma.message.create({
       data: {
         ...messageData,
