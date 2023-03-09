@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from 'react';
+import { useWriteEmailReducer } from '../reducers/WriteMailReducer';
 
 export type ParticipantsOnMessageProps = {
   id: string;
@@ -40,8 +41,8 @@ interface UserProviderProps {
 }
 
 interface MessageFormattedProps {
-  messagesSent: MessageProps[];
-  messagesReceived: MessageProps[];
+  messagesSent: ParticipantsOnMessageProps[];
+  messagesReceived: ParticipantsOnMessageProps[];
 }
 
 interface UserContextProps {
@@ -49,9 +50,11 @@ interface UserContextProps {
   messages: MessageFormattedProps;
   setUser: (user: UserProps) => void;
   handleUserLoginRequest: (email: string) => void;
+  getRecipients: (message: MessageProps) => UserProps[];
 }
 
 const UserContextProvider = ({ children }: UserProviderProps) => {
+  const { state, dispatch } = useWriteEmailReducer();
   const [user, setUser] = useState<UserProps | undefined>(undefined);
   const [messagesFormatted, setMessagesFormatted] =
     useState<MessageFormattedProps>({ messagesReceived: [], messagesSent: [] });
@@ -74,29 +77,22 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
   };
 
   const formatUserMessages = (user: UserProps) => {
-    const withoutDeletedSentMessages = user.messagesSent.filter(
+    const messagesSent = user.messagesSent.filter(
       (participant) => participant.senderDeleted === false
     );
-    const withoutDeletedReceivedMessages = user.messagesReceived.filter(
+    const messagesReceived = user.messagesReceived.filter(
       (participant) => participant.recipientDeleted === false
     );
 
-    const messagesSent = withoutDeletedSentMessages.map((message) => {
-      const msg = message.message;
-      msg.participants = [message];
-      msg.isRead = message.isRead;
-
-      return msg;
-    });
-    const messagesReceived = withoutDeletedReceivedMessages.map((message) => {
-      const msg = message.message;
-      msg.participants = [message];
-      msg.isRead = message.isRead;
-
-      return msg;
-    });
-
     setMessagesFormatted({ messagesSent, messagesReceived });
+  };
+
+  const getRecipients = (message: MessageProps) => {
+    const recipients = message.participants.map((participant) => {
+      return participant.recipient;
+    });
+
+    return recipients;
   };
 
   const contextValue = {
@@ -104,6 +100,9 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
     messages: messagesFormatted,
     setUser,
     handleUserLoginRequest,
+    getRecipients,
+    state,
+    dispatch,
   };
 
   return (

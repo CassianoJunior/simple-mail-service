@@ -12,6 +12,7 @@ const routes: Record<string, CallableFunction> = {
   '/messages:put': messageController.updateMessage,
   '/messages:delete': messageController.softDeleteMessage,
   '/replyMessage:post': messageController.replyMessage,
+  '/forwardMessage:post': messageController.forwardMessage,
   '/readMessage:put': messageController.readMessage,
 
   default: async (req: IncomingMessage, res: ServerResponse) => {

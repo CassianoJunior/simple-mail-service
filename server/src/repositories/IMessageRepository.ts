@@ -1,5 +1,4 @@
 import { Message } from '../entities/Message';
-import { CreateParticipantsOnMessageDataFromMessage } from './IParticipantsOnMessageRepository';
 
 interface CreateMessageData {
   body: string;
@@ -15,10 +14,7 @@ interface UpdateMessageData {
 interface IMessageRepository {
   find(id: string): Promise<Message | undefined>;
   findAll(): Promise<Message[]>;
-  create(
-    message: CreateMessageData,
-    participantsOnMessageData: CreateParticipantsOnMessageDataFromMessage
-  ): Promise<Message>;
+  create(message: CreateMessageData): Promise<Message>;
   update(id: string, message: UpdateMessageData): Promise<void>;
   delete(id: string): Promise<void>;
 }

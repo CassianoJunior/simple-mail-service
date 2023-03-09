@@ -1,30 +1,22 @@
 import moment from 'moment';
-import { MessageProps, useUserContext } from '../contexts/UserContext';
+import {
+  ParticipantsOnMessageProps,
+  useUserContext,
+} from '../contexts/UserContext';
 
 interface MailCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  message: MessageProps;
+  participantOnMessage: ParticipantsOnMessageProps;
   sectionTitleActive: string;
   isSelected: boolean;
 }
 
 const MailCard = ({
-  message,
+  participantOnMessage,
   sectionTitleActive,
   isSelected,
   ...rest
 }: MailCardProps) => {
-  const { user } = useUserContext();
-
-  const getParticipant = (
-    message: MessageProps,
-    who: 'recipient' | 'sender'
-  ) => {
-    const participant = message.participants.find(
-      (participant) => message.id === participant.messageId
-    );
-
-    return who === 'sender' ? participant?.sender : participant?.recipient;
-  };
+  const { getRecipients } = useUserContext();
 
   return (
     <div
@@ -33,7 +25,7 @@ const MailCard = ({
     ${isSelected ? 'bg-[#2761CA]' : ''}
     rounded-lg shadow-xl relative
     ${
-      message.isRead &&
+      participantOnMessage.isRead &&
       !isSelected &&
       sectionTitleActive !== 'Sent' &&
       'opacity-80'
@@ -45,7 +37,7 @@ const MailCard = ({
           isSelected
             ? ''
             : `${
-                !message.isRead && sectionTitleActive !== 'Sent'
+                !participantOnMessage.isRead && sectionTitleActive !== 'Sent'
                   ? 'border-b-2 border-[#3B82F7]'
                   : 'border-b-2 border-zinc-500'
               }`
@@ -54,44 +46,52 @@ const MailCard = ({
         <div className="flex justify-between">
           <div className="flex flex-col w-full">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm text-white">
+              <h3 className="text-sm text-white max-w-[20ch] whitespace-nowrap overflow-hidden text-ellipsis">
                 {sectionTitleActive === 'Inbox' ? (
                   <p
                     className={`${
-                      message.isRead && !isSelected && 'text-gray-400'
+                      participantOnMessage.isRead &&
+                      !isSelected &&
+                      'text-gray-400'
                     }`}
                   >
-                    {getParticipant(message, 'sender')?.name}
+                    {participantOnMessage.sender.name}
                   </p>
                 ) : (
                   <p>
                     To:{' '}
                     <span className="font-semibold">
-                      {getParticipant(message, 'recipient')?.name}
+                      {getRecipients(participantOnMessage.message)
+                        .map((recipient) => recipient.name)
+                        .join(', ')}
                     </span>
                   </p>
                 )}
               </h3>
               <p className="text-[0.65rem] text-gray-400">
-                {moment(message.createdAt).format('MMM D, YYYY h:mm A')}
+                {moment(participantOnMessage.message.createdAt).format(
+                  'MMM D, YYYY h:mm A'
+                )}
               </p>
             </div>
             <p
               className={`text-xs ${
-                message.isRead && !isSelected && sectionTitleActive !== 'Sent'
+                participantOnMessage.isRead &&
+                !isSelected &&
+                sectionTitleActive !== 'Sent'
                   ? 'text-gray-400'
                   : 'text-white'
               }`}
             >
-              {message.subject}
+              {participantOnMessage.message.subject}
             </p>
           </div>
         </div>
         <p className="text-xs text-gray-400 max-w-[40ch] whitespace-nowrap overflow-hidden text-ellipsis">
-          {message.body}
+          {participantOnMessage.message.body}
         </p>
       </div>
-      {!message.isRead && sectionTitleActive !== 'Sent' && (
+      {!participantOnMessage.isRead && sectionTitleActive !== 'Sent' && (
         <div className="bg-[#3B82F7] h-2 w-2 rounded-full absolute top-6 left-2" />
       )}
     </div>

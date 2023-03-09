@@ -28,18 +28,21 @@ class MessageService {
   async create(
     data: CreateMessageData,
     participantsData: CreateParticipantsOnMessageDataFromMessage
-  ): Promise<Either<Error, ParticipantsOnMessage>> {
-    const message = await this.messageRepository.create(data, participantsData);
+  ): Promise<Either<Error, ParticipantsOnMessage[]>> {
+    const message = await this.messageRepository.create(data);
 
-    const participantsOnMessage =
-      await this.participantsOnMessageRepository.create({
+    const resultsPromises = participantsData.recipientsIds.map(async (id) => {
+      return this.participantsOnMessageRepository.create({
         messageId: message.id,
         senderId: participantsData.senderId,
-        recipientId: participantsData.recipientId,
+        recipientId: id,
         senderDeleted: false,
         recipientDeleted: false,
         isRead: false,
       });
+    });
+
+    const participantsOnMessage = await Promise.all(resultsPromises);
 
     return right(participantsOnMessage);
   }

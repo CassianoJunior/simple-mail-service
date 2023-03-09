@@ -10,14 +10,32 @@ class PrismaUserRepository implements IUserRepository {
       include: {
         messagesReceived: {
           include: {
-            message: true,
+            message: {
+              include: {
+                participants: {
+                  include: {
+                    sender: true,
+                    recipient: true,
+                  },
+                },
+              },
+            },
             recipient: true,
             sender: true,
           },
         },
         messagesSent: {
           include: {
-            message: true,
+            message: {
+              include: {
+                participants: {
+                  include: {
+                    sender: true,
+                    recipient: true,
+                  },
+                },
+              },
+            },
             recipient: true,
             sender: true,
           },
@@ -36,14 +54,32 @@ class PrismaUserRepository implements IUserRepository {
       include: {
         messagesReceived: {
           include: {
-            message: true,
+            message: {
+              include: {
+                participants: {
+                  include: {
+                    sender: true,
+                    recipient: true,
+                  },
+                },
+              },
+            },
             recipient: true,
             sender: true,
           },
         },
         messagesSent: {
           include: {
-            message: true,
+            message: {
+              include: {
+                participants: {
+                  include: {
+                    sender: true,
+                    recipient: true,
+                  },
+                },
+              },
+            },
             recipient: true,
             sender: true,
           },

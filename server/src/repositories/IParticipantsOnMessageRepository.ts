@@ -7,11 +7,12 @@ interface CreateParticipantsOnMessageData {
   senderDeleted: boolean;
   recipientDeleted: boolean;
   replyToId?: string;
+  forwardToId?: string;
 }
 
 interface CreateParticipantsOnMessageDataFromMessage {
   senderId: string;
-  recipientId: string;
+  recipientsIds: string[];
 }
 
 interface UpdateParticipantsOnMessageData {

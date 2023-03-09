@@ -3,47 +3,74 @@ import { Forward, Reply, Trash2, User } from 'lucide-react';
 import moment from 'moment';
 import { useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
-import { SectionTitle } from '../App';
-import { MessageProps, useUserContext } from '../contexts/UserContext';
+import { useMailContext } from '../contexts/MailContext';
+import {
+  MessageProps,
+  ParticipantsOnMessageProps,
+  useUserContext,
+} from '../contexts/UserContext';
+import { ActionType } from '../reducers/WriteMailReducer';
 import { api } from '../utils/axios';
 interface MailDetailsProps {
-  message: MessageProps;
-  activeSection: SectionTitle;
-  setSelectedMessage: (message: MessageProps | undefined) => void;
-  toggleIsReplying: () => void;
+  participantOnMessage: ParticipantsOnMessageProps;
+  setSelectedMessage: (message: ParticipantsOnMessageProps | undefined) => void;
 }
 
 const MailDetails = ({
-  message,
-  activeSection,
+  participantOnMessage,
   setSelectedMessage,
-  toggleIsReplying,
 }: MailDetailsProps) => {
-  const { user, handleUserLoginRequest } = useUserContext();
+  const { user, handleUserLoginRequest, getRecipients } = useUserContext();
 
-  const getParticipant = (message: MessageProps) => {
-    const participant = message.participants.find(
-      (participant) => message.id === participant.messageId
-    );
+  const { dispatch } = useMailContext();
 
-    return participant;
+  const handleReplyMessage = () => {
+    const recipientsWithoutMe = getRecipients(
+      participantOnMessage.message
+    ).filter((recipient) => recipient.email !== user?.email);
+
+    const recipientsWithSender = [
+      participantOnMessage.sender,
+      ...recipientsWithoutMe,
+    ];
+
+    const recipients = recipientsWithSender.map((recipient) => recipient.email);
+
+    dispatch({
+      type: ActionType.REPLYING,
+      payload: {
+        subject: `Re: ${participantOnMessage.message.subject}`,
+        recipients,
+        body: `On ${moment(participantOnMessage.message.createdAt).format(
+          'MMM D, YYYY h:mm A'
+        )}, ${participantOnMessage.sender.name} wrote:\n ${
+          participantOnMessage.message.body
+        }`,
+      },
+    });
   };
 
-  const handleReply = (message: MessageProps) => {
-    toggleIsReplying();
+  const handleForward = () => {
+    dispatch({
+      type: ActionType.FORWARDING,
+      payload: {
+        subject: `Fwd: ${participantOnMessage.message.subject}`,
+        recipients: [],
+        body: `On ${moment(participantOnMessage.message.createdAt).format(
+          'MMM D, YYYY h:mm A'
+        )}, ${participantOnMessage.sender.name} wrote:\n ${
+          participantOnMessage.message.body
+        }`,
+      },
+    });
   };
 
-  const handleForward = () => {};
-
-  const handleDelete = async (message: MessageProps) => {
-    const participant = getParticipant(message);
-
-    if (!participant) return;
-
-    const who = participant.senderId === user?.id ? 'sender' : 'recipient';
+  const handleDelete = async () => {
+    const who =
+      participantOnMessage.senderId === user?.id ? 'sender' : 'recipient';
 
     const response = await api.delete(
-      `/messages?id=${participant.id}&who=${who}`
+      `/messages?id=${participantOnMessage.id}&who=${who}`
     );
 
     if (response.status === 204) {
@@ -60,44 +87,51 @@ const MailDetails = ({
       <div className="flex flex-col justify-between w-full h-24 p-4">
         <div className="w-full justify-center items-center flex gap-4">
           <div
-            onClick={toggleIsReplying}
+            onClick={handleReplyMessage}
             title="Reply"
             className="p-2 hover:bg-gray-600 hover:cursor-pointer rounded-full flex items-center justify-center"
           >
             <Reply color="#2DA4FF" strokeWidth={1.5} size={24} />
           </div>
           <div
+            onClick={handleForward}
             title="Forward"
             className="p-2 hover:bg-gray-600 hover:cursor-pointer rounded-full flex items-center justify-center"
           >
             <Forward color="#2DA4FF" strokeWidth={1.5} size={24} />
           </div>
-          <ConfirmDeleteModal handleDelete={handleDelete} message={message} />
+          <ConfirmDeleteModal
+            handleDelete={handleDelete}
+            message={participantOnMessage.message}
+          />
         </div>
         <div className="flex gap-2 w-full border-b-[1px] border-zinc-500">
           <User color="#9ca3af" size={24} strokeWidth={1.5} />
           <div className="flex flex-col w-full gap-1">
             <div className="flex justify-between items-center w-full">
               <p className="text-sm font-semibold">
-                {getParticipant(message)?.sender.name}
+                {`By: ${participantOnMessage.sender.name}`}
+                <span className="font-normal text-gray-400">{` | <${participantOnMessage.sender.email}>`}</span>
               </p>
               <p className="text-xs">
-                {moment(message.createdAt).format('MMM D, YYYY h:mm A')}
+                {moment(participantOnMessage.message.createdAt).format(
+                  'MMM D, YYYY h:mm A'
+                )}
               </p>
             </div>
-            <p className="text-sm">{message.subject}</p>
+            <p className="text-sm">{participantOnMessage.message.subject}</p>
             <p className="text-xs mb-4">
               To:{' '}
               <span className="text-gray-400">
-                {activeSection === 'Inbox'
-                  ? user?.email
-                  : getParticipant(message)?.recipient.email}
+                {getRecipients(participantOnMessage.message)
+                  .map((recipient) => recipient.email)
+                  .join(', ')}
               </span>
             </p>
           </div>
         </div>
         <div className="text-md text-white py-4 px-6 whitespace-pre-line">
-          {message.body}
+          {participantOnMessage.message.body}
         </div>
       </div>
     </div>

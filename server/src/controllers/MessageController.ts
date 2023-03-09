@@ -67,17 +67,12 @@ const messageController = {
 
         if (recipientsIds.some((id) => id === undefined)) return res.end();
 
-        const promiseResults = recipientsIds.map(async (id) => {
-          return messageService.create(messageParsed.message, {
-            senderId: messageParsed.from,
-            recipientId: id,
-          });
+        const result = await messageService.create(messageParsed.message, {
+          senderId: messageParsed.from,
+          recipientsIds: recipientsIds as string[],
         });
 
-        const results = await Promise.all(promiseResults);
-
-        if (results.some((result) => result.isLeft()))
-          return res.writeHead(400, DEFAULT_HEADER).end();
+        if (result.isLeft()) return res.writeHead(400, DEFAULT_HEADER).end();
 
         return res.writeHead(201, DEFAULT_HEADER).end();
       } catch (err) {
@@ -104,7 +99,6 @@ const messageController = {
           body: z.string().optional(),
           subject: z.string().optional(),
           isRead: z.boolean().optional(),
-          isDeleted: z.boolean().optional(),
         });
 
         const message = messageSchema.parse(JSON.parse(data.toString()));
@@ -159,7 +153,6 @@ const messageController = {
       const { id } = urlSchema.parse(getUrlParams(req.url));
 
       const result = await participantOnMessageService.readMessage(id);
-      console.log(result);
 
       if (result.isLeft())
         return res
@@ -202,8 +195,7 @@ const messageController = {
       if (err instanceof z.ZodError) {
         const errorMessage = handle(err);
         res.writeHead(400, DEFAULT_HEADER);
-        res.statusMessage = `${errorMessage} in url`;
-        res.end();
+        res.end(`${errorMessage} in url`);
       } else {
         handleError(res)(err);
       }
@@ -218,20 +210,35 @@ const messageController = {
             body: z.string(),
             subject: z.string(),
             isRead: z.boolean().default(false),
-            isDeleted: z.boolean().default(false),
           }),
           from: z.string(),
-          to: z.string(),
+          to: z.array(z.string()),
           replyTo: z.string(),
         });
 
         const messageParsed = messageSchema.parse(JSON.parse(data.toString()));
 
+        const recipients = messageParsed.to.map(async (recipient) => {
+          const exists = await userService.findByEmail(recipient);
+
+          if (exists.isLeft()) {
+            res.writeHead(404, DEFAULT_HEADER);
+            res.end(`${recipient} is not found`);
+            return;
+          }
+
+          return exists.value.id;
+        });
+
+        const recipientsIds = await Promise.all(recipients);
+
+        if (recipientsIds.some((id) => id === undefined)) return res.end();
+
         const result = await participantOnMessageService.replyToMessage(
           messageParsed.message,
           {
             senderId: messageParsed.from,
-            recipientId: messageParsed.to,
+            recipientsIds: recipientsIds as string[],
           },
           messageParsed.replyTo
         );
@@ -244,9 +251,64 @@ const messageController = {
         if (err instanceof z.ZodError) {
           const errorMessage = handle(err);
           res.writeHead(400, DEFAULT_HEADER);
-          res.statusMessage = JSON.stringify(errorMessage);
-          console.log(res);
-          res.end();
+          res.end(errorMessage);
+        } else {
+          handleError(res)(err);
+        }
+      }
+    }
+  },
+
+  forwardMessage: async (req: IncomingMessage, res: ServerResponse) => {
+    for await (const data of req) {
+      try {
+        const messageSchema = z.object({
+          message: z.object({
+            body: z.string(),
+            subject: z.string(),
+            isRead: z.boolean().default(false),
+          }),
+          from: z.string(),
+          to: z.array(z.string()),
+          forwardToId: z.string(),
+        });
+
+        const messageParsed = messageSchema.parse(JSON.parse(data.toString()));
+
+        const recipients = messageParsed.to.map(async (recipient) => {
+          const exists = await userService.findByEmail(recipient);
+
+          if (exists.isLeft()) {
+            res.writeHead(404, DEFAULT_HEADER);
+            res.end(`${recipient} is not found`);
+            return;
+          }
+
+          return exists.value.id;
+        });
+
+        const recipientsIds = await Promise.all(recipients);
+
+        if (recipientsIds.some((id) => id === undefined)) return res.end();
+
+        const result = await participantOnMessageService.forwardMessage(
+          messageParsed.message,
+          {
+            senderId: messageParsed.from,
+            recipientsIds: recipientsIds as string[],
+          },
+          messageParsed.forwardToId
+        );
+
+        if (result.isLeft())
+          return res.writeHead(400, DEFAULT_HEADER).end(result.value.message);
+
+        return res.writeHead(201, DEFAULT_HEADER).end();
+      } catch (err) {
+        if (err instanceof z.ZodError) {
+          const errorMessage = handle(err);
+          res.writeHead(400, DEFAULT_HEADER);
+          res.end(errorMessage);
         } else {
           handleError(res)(err);
         }

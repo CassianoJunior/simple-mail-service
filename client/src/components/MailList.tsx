@@ -1,13 +1,17 @@
 import { MailPlus } from 'lucide-react';
-import { MessageProps, useUserContext } from '../contexts/UserContext';
+import { useMailContext } from '../contexts/MailContext';
+import {
+  ParticipantsOnMessageProps,
+  useUserContext,
+} from '../contexts/UserContext';
+import { ActionType } from '../reducers/WriteMailReducer';
 import { MailCard } from './MailCard';
 
 interface MailListProps {
   sectionTitle: string;
-  selectedMessage: MessageProps | undefined;
+  selectedMessage: ParticipantsOnMessageProps | undefined;
   unreadMessages?: number;
   handleClickMessage: (id: string) => void;
-  toggleWritingMail: () => void;
 }
 
 const MailList = ({
@@ -15,14 +19,21 @@ const MailList = ({
   selectedMessage,
   handleClickMessage,
   unreadMessages,
-  toggleWritingMail,
 }: MailListProps) => {
   const { messages: messagesFormmated } = useUserContext();
+  const { dispatch } = useMailContext();
 
   const messages =
     sectionTitle === 'Inbox'
       ? messagesFormmated.messagesReceived
       : messagesFormmated.messagesSent;
+
+  const handleNewMail = () => {
+    dispatch({
+      type: ActionType.WRITING,
+      payload: { body: '', subject: '', recipients: [] },
+    });
+  };
 
   return (
     <div className="h-screen py-2 px-4 bg-zinc-700 border-l-[1px] border-r-[1px] border-zinc-900 pb-20">
@@ -37,7 +48,7 @@ const MailList = ({
           </p>
         </div>
         <button
-          onClick={toggleWritingMail}
+          onClick={handleNewMail}
           className="items-center gap-2 bg-[#2761CA] rounded-full h-10 w-auto max-w-[2.5rem] p-2 transition-all duration-200 overflow-hidden hover:max-w-[10rem] hover:flex"
         >
           <MailPlus strokeWidth={1.5} size={24} color="white" />
@@ -50,7 +61,7 @@ const MailList = ({
           .map((message) => (
             <MailCard
               key={message.id}
-              message={message}
+              participantOnMessage={message}
               sectionTitleActive={sectionTitle}
               isSelected={selectedMessage?.id === message.id}
               onClick={() => handleClickMessage(message.id)}

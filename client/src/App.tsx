@@ -2,21 +2,26 @@ import { MailOpen } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { MailDetails } from './components/MailDetails';
 import { MailList } from './components/MailList';
-import { NewMail } from './components/NewMail';
 import { Sidebar } from './components/Sidebar';
-import { MessageProps, useUserContext } from './contexts/UserContext';
+import { WriteMail } from './components/WriteMail';
+import { useMailContext } from './contexts/MailContext';
+import {
+  ParticipantsOnMessageProps,
+  useUserContext,
+} from './contexts/UserContext';
+import { ActionType } from './reducers/WriteMailReducer';
+import { api } from './utils/axios';
 
 export type SectionTitle = 'Inbox' | 'Sent';
 
 const App = () => {
   const [activeSection, setActiveSection] = useState<SectionTitle>('Inbox');
-  const [isWritingMail, setIsWritingMail] = useState<boolean>(false);
-  const [isReplying, setIsReplying] = useState<boolean>(false);
   const [selectedMessage, setSelectedMessage] = useState<
-    MessageProps | undefined
+    ParticipantsOnMessageProps | undefined
   >(undefined);
 
   const { user, handleUserLoginRequest, messages } = useUserContext();
+  const { state } = useMailContext();
 
   useEffect(() => {
     handleUserLoginRequest('cassiano@mail.com');
@@ -42,33 +47,13 @@ const App = () => {
 
     if (message?.isRead) return;
 
-    const participant = user?.messagesReceived.find((participantOnMessage) => {
-      return participantOnMessage.messageId === id;
-    });
-
-    if (participant && message) {
-      await fetch(`http://localhost:3000/readMessage?id=${participant.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+    if (message) {
+      await api.put(`/readMessage?id=${message.id}`);
       message.isRead = true;
-      participant.isRead = true;
     }
   };
 
-  const toggleWritingMail = useCallback(() => {
-    setIsReplying(false);
-    setIsWritingMail((state) => !state);
-  }, [isWritingMail]);
-
-  const toggleIsReplying = useCallback(() => {
-    toggleWritingMail();
-    setIsReplying((state) => !state);
-  }, [isReplying]);
-
-  const countUnreadMessages = (messages: MessageProps[]) => {
+  const countUnreadMessages = (messages: ParticipantsOnMessageProps[]) => {
     const unreadMessages = messages.filter((message) => !message.isRead);
 
     return unreadMessages.length === 0 ? undefined : unreadMessages.length;
@@ -88,14 +73,11 @@ const App = () => {
           selectedMessage={selectedMessage}
           unreadMessages={countUnreadMessages(messages.messagesReceived)}
           handleClickMessage={handleClickMessage}
-          toggleWritingMail={toggleWritingMail}
         />
         {selectedMessage ? (
           <MailDetails
-            message={selectedMessage}
+            participantOnMessage={selectedMessage}
             setSelectedMessage={setSelectedMessage}
-            activeSection={activeSection}
-            toggleIsReplying={toggleIsReplying}
           />
         ) : (
           <div className="h-screen flex flex-col gap-4 items-center justify-center text-gray-400 bg-zinc-700">
@@ -106,13 +88,8 @@ const App = () => {
           </div>
         )}
       </div>
-
-      {isWritingMail && (
-        <NewMail
-          toggleWritingMail={toggleWritingMail}
-          isReplying={isReplying}
-          message={selectedMessage}
-        />
+      {state.type !== ActionType.NONE && (
+        <WriteMail participantOnMessage={selectedMessage} />
       )}
     </>
   ) : (

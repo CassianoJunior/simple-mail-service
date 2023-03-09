@@ -65,30 +65,60 @@ class ParticipantsOnMessageService {
     data: CreateMessageData,
     participantsData: CreateParticipantsOnMessageDataFromMessage,
     messageId: string
-  ): Promise<Either<Error, ParticipantsOnMessage>> {
+  ): Promise<Either<Error, ParticipantsOnMessage[]>> {
     const messageExists = await this.repository.find(messageId);
 
     if (!messageExists) return left(new Error('Message not found'));
 
-    const { sender, message, recipient, ...participantsOnMessageRest } =
-      messageExists;
+    const { sender, message, recipient } = messageExists;
 
-    const replyMessage = await this.messageRepository.create(
-      data,
-      participantsData
-    );
+    const replyMessage = await this.messageRepository.create(data);
 
-    const replyParticipantsOnMessage = await this.repository.create({
-      messageId: replyMessage.id,
-      senderId: participantsData.senderId,
-      recipientId: participantsData.recipientId,
-      isRead: false,
-      senderDeleted: false,
-      recipientDeleted: false,
-      replyToId: messageId,
+    const resultsPromises = participantsData.recipientsIds.map(async (id) => {
+      return this.repository.create({
+        messageId: replyMessage.id,
+        senderId: participantsData.senderId,
+        recipientId: id,
+        senderDeleted: false,
+        recipientDeleted: false,
+        isRead: false,
+        replyToId: messageId,
+      });
     });
 
-    return right(replyParticipantsOnMessage);
+    const replysParticipantsOnMessage = await Promise.all(resultsPromises);
+
+    return right(replysParticipantsOnMessage);
+  }
+
+  async forwardMessage(
+    data: CreateMessageData,
+    participantsData: CreateParticipantsOnMessageDataFromMessage,
+    messageId: string
+  ): Promise<Either<Error, ParticipantsOnMessage[]>> {
+    const messageExists = await this.repository.find(messageId);
+
+    if (!messageExists) return left(new Error('Message not found'));
+
+    const { sender, message, recipient } = messageExists;
+
+    const forwardMessage = await this.messageRepository.create(data);
+
+    const resultsPromises = participantsData.recipientsIds.map(async (id) => {
+      return this.repository.create({
+        messageId: forwardMessage.id,
+        senderId: participantsData.senderId,
+        recipientId: id,
+        senderDeleted: false,
+        recipientDeleted: false,
+        isRead: false,
+        forwardToId: messageId,
+      });
+    });
+
+    const forwardParticipantsOnMessage = await Promise.all(resultsPromises);
+
+    return right(forwardParticipantsOnMessage);
   }
 }
 

@@ -46,6 +46,7 @@ model ParticipantsOnMessage {
   senderId    String
   recipientId String
   replyToId   String?
+  forwardToId String?
 
   message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   sender    User    @relation(fields: [senderId], references: [id], name: "SentMessages", onDelete: Cascade, onUpdate: Cascade)

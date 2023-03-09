@@ -23,7 +23,7 @@ const SidebarButton = ({
       <h2 className="font-inter font-semibold text-sm">{title}</h2>
       {bagdeCount && (
         <div className="flex items-center justify-center absolute right-2 h-4 px-2 text-xs text-white bg-zinc-700 bg-opacity-40 rounded-full">
-          {bagdeCount}
+          {new Intl.NumberFormat().format(bagdeCount)}
         </div>
       )}
     </button>
