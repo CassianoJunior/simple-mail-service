@@ -28,8 +28,7 @@ const userController = {
       if (err instanceof z.ZodError) {
         const errorMessage = handle(err);
         res.writeHead(400, DEFAULT_HEADER);
-        res.write(JSON.stringify({ error: `${errorMessage} in url` }));
-        res.end();
+        res.end(errorMessage);
       } else {
         handleError(res)(err);
       }

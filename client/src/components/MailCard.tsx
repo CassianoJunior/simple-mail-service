@@ -46,7 +46,7 @@ const MailCard = ({
         <div className="flex justify-between">
           <div className="flex flex-col w-full">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm text-white max-w-[20ch] whitespace-nowrap overflow-hidden text-ellipsis">
+              <h3 className="text-sm text-white max-w-[15ch] whitespace-nowrap overflow-hidden text-ellipsis">
                 {sectionTitleActive === 'Inbox' ? (
                   <p
                     className={`${

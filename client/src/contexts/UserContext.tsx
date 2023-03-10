@@ -1,5 +1,7 @@
 import { createContext, useContext, useState } from 'react';
+import { toast } from 'react-toastify';
 import { useWriteEmailReducer } from '../reducers/WriteMailReducer';
+import { api } from '../utils/axios';
 
 export type ParticipantsOnMessageProps = {
   id: string;
@@ -48,43 +50,88 @@ interface MessageFormattedProps {
 interface UserContextProps {
   user: UserProps | undefined;
   messages: MessageFormattedProps;
-  setUser: (user: UserProps) => void;
+  setUser: (user: UserProps | undefined) => void;
   handleUserLoginRequest: (email: string) => void;
+  requestUserData: (email: string) => void;
   getRecipients: (message: MessageProps) => UserProps[];
+  userExists: string | undefined;
+  handleUserLogout: () => void;
+  handleUserRegisterRequest: (username: string, email: string) => void;
 }
 
 const UserContextProvider = ({ children }: UserProviderProps) => {
   const { state, dispatch } = useWriteEmailReducer();
+  const [userExists, setUserExists] = useState<string | undefined>(undefined);
   const [user, setUser] = useState<UserProps | undefined>(undefined);
   const [messagesFormatted, setMessagesFormatted] =
     useState<MessageFormattedProps>({ messagesReceived: [], messagesSent: [] });
 
-  const handleUserLoginRequest = (email: string) => {
-    fetch(`http://localhost:3000/users?email=${email}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }).then((response) =>
-      response
-        .json()
-        .then((data) => {
-          setUser(data);
-          formatUserMessages(data);
-        })
-        .catch((err) => console.log(err))
-    );
+  const handleUserLoginRequest = async (email: string) => {
+    await api
+      .get(`/users?email=${email}`)
+      .then((response) => {
+        if (response.status === 200) {
+          setUserExists(email);
+        }
+      })
+      .catch((err) => {
+        return toast.error(err.response.data);
+      });
+  };
+
+  const handleUserRegisterRequest = async (username: string, email: string) => {
+    await api
+      .post('/users', {
+        name: username,
+        email,
+      })
+      .then((response) => {
+        if (response.status === 201) {
+          setUserExists(email);
+        }
+      })
+      .catch((err) => {
+        return toast.error(err.response.data);
+      });
+  };
+
+  const requestUserData = async (email: string) => {
+    await api
+      .get(`/users?email=${email}`)
+      .then((response) => {
+        setUser(response.data);
+        formatUserMessages(response.data);
+      })
+      .catch((err) => {
+        return toast.error(err.response.data);
+      });
   };
 
   const formatUserMessages = (user: UserProps) => {
-    const messagesSent = user.messagesSent.filter(
+    const messagesSentWithoutDeleted = user.messagesSent.filter(
       (participant) => participant.senderDeleted === false
     );
+
+    const messagesSentWithoutDuplicates = [] as ParticipantsOnMessageProps[];
+
+    messagesSentWithoutDeleted.forEach((participant) => {
+      if (
+        !messagesSentWithoutDuplicates.find(
+          ({ message }) => message.id === participant.message.id
+        )
+      ) {
+        messagesSentWithoutDuplicates.push(participant);
+      }
+    });
+
     const messagesReceived = user.messagesReceived.filter(
       (participant) => participant.recipientDeleted === false
     );
 
-    setMessagesFormatted({ messagesSent, messagesReceived });
+    setMessagesFormatted({
+      messagesSent: messagesSentWithoutDuplicates,
+      messagesReceived,
+    });
   };
 
   const getRecipients = (message: MessageProps) => {
@@ -95,6 +142,12 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
     return recipients;
   };
 
+  const handleUserLogout = () => {
+    setUser(undefined);
+    setMessagesFormatted({ messagesReceived: [], messagesSent: [] });
+    setUserExists(undefined);
+  };
+
   const contextValue = {
     user,
     messages: messagesFormatted,
@@ -103,6 +156,10 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
     getRecipients,
     state,
     dispatch,
+    userExists,
+    requestUserData,
+    handleUserLogout,
+    handleUserRegisterRequest,
   };
 
   return (

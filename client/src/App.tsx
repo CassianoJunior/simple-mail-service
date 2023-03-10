@@ -1,5 +1,6 @@
 import { MailOpen } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
+import { LoadingSkeleton } from './components/LoadingSkeleton';
 import { MailDetails } from './components/MailDetails';
 import { MailList } from './components/MailList';
 import { Sidebar } from './components/Sidebar';
@@ -20,11 +21,11 @@ const App = () => {
     ParticipantsOnMessageProps | undefined
   >(undefined);
 
-  const { user, handleUserLoginRequest, messages } = useUserContext();
+  const { user, userExists, requestUserData, messages } = useUserContext();
   const { state } = useMailContext();
 
   useEffect(() => {
-    handleUserLoginRequest('cassiano@mail.com');
+    userExists && requestUserData(userExists);
   }, []);
 
   const handleClickInboxSection = useCallback(() => {
@@ -93,7 +94,7 @@ const App = () => {
       )}
     </>
   ) : (
-    <div>Loading</div>
+    <LoadingSkeleton />
   );
 };
 

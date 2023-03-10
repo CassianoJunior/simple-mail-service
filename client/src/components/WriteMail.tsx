@@ -14,7 +14,7 @@ interface WriteMailProps {
 }
 
 const WriteMail = ({ participantOnMessage }: WriteMailProps) => {
-  const { user, handleUserLoginRequest, getRecipients } = useUserContext();
+  const { user, requestUserData } = useUserContext();
   const { state, dispatch } = useMailContext();
 
   const [recipient, setRecipient] = useState('');
@@ -37,7 +37,7 @@ const WriteMail = ({ participantOnMessage }: WriteMailProps) => {
           setSubject('');
           setBody('');
           dispatch({ type: ActionType.NONE, payload: initialState.payload });
-          handleUserLoginRequest(user?.email || '');
+          requestUserData(user?.email || '');
 
           toast.success('Message sent');
           return;
@@ -67,7 +67,7 @@ const WriteMail = ({ participantOnMessage }: WriteMailProps) => {
           setSubject('');
           setBody('');
           dispatch({ type: ActionType.NONE, payload: initialState.payload });
-          handleUserLoginRequest(user?.email || '');
+          requestUserData(user?.email || '');
 
           toast.success('Message answered');
           return;
@@ -97,7 +97,7 @@ const WriteMail = ({ participantOnMessage }: WriteMailProps) => {
           setSubject('');
           setBody('');
           dispatch({ type: ActionType.NONE, payload: initialState.payload });
-          handleUserLoginRequest(user?.email || '');
+          requestUserData(user?.email || '');
 
           toast.success('Message forwarded');
           return;

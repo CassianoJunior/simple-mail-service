@@ -1,4 +1,4 @@
-import { MailPlus } from 'lucide-react';
+import { MailPlus, Mails } from 'lucide-react';
 import { useMailContext } from '../contexts/MailContext';
 import {
   ParticipantsOnMessageProps,
@@ -56,17 +56,27 @@ const MailList = ({
         </button>
       </header>
       <div className="flex flex-col gap-2 px-2 max-h-full overflow-y-scroll scrollbar-w-1 scrollbar-thumb-rounded-full scrollbar-track-transparent scrollbar-thin scrollbar-thumb-zinc-600">
-        {messages
-          .sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1))
-          .map((message) => (
-            <MailCard
-              key={message.id}
-              participantOnMessage={message}
-              sectionTitleActive={sectionTitle}
-              isSelected={selectedMessage?.id === message.id}
-              onClick={() => handleClickMessage(message.id)}
-            />
-          ))}
+        {messages.length !== 0 ? (
+          messages
+            .sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1))
+            .map((message) => (
+              <MailCard
+                key={message.id}
+                participantOnMessage={message}
+                sectionTitleActive={sectionTitle}
+                isSelected={selectedMessage?.id === message.id}
+                onClick={() => handleClickMessage(message.id)}
+              />
+            ))
+        ) : (
+          <div className="h-screen flex flex-col gap-4 items-center justify-center text-gray-400 bg-zinc-700">
+            <Mails color="#9ca3af" size={48} strokeWidth={0.8} />
+            <p className="text-lg text-center ">
+              Your {`${sectionTitle === 'Inbox' ? 'received' : 'sent'}`}{' '}
+              messages will appear here
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
