@@ -32,7 +32,7 @@ const LogIn = () => {
   return userExists ? (
     <App />
   ) : (
-    <div className="h-screen flex justify-between items-center bg-zinc-700">
+    <div className="h-screen flex justify-between items-center bg-blue-100">
       <div className="max-w-7xl h-[40rem] flex items-center justify-between m-auto p-6 rounded-2xl bg-blue-200 shadow-md shadow-blue-100">
         <div className="h-full">
           <div className="bg-trasparent rounded-lg py-6 px-8 w-full h-full flex flex-col justify-center">
@@ -49,7 +49,7 @@ const LogIn = () => {
                 </h2>
 
                 <input
-                  className="border disabled:cursor-not-allowed rounded-lg block w-full py-3 px-6 outline-none bg-blue-300 placeholder-gray-600 text-black focus:ring-blue-500 focus:ring-2"
+                  className="disabled:cursor-not-allowed rounded-lg block w-full py-3 px-6 outline-none bg-blue-300 placeholder-gray-600 text-black focus:ring-blue-500 focus:ring-2"
                   type="email"
                   placeholder="Type your email"
                   value={email}
@@ -63,7 +63,7 @@ const LogIn = () => {
                 </h2>
 
                 <input
-                  className="mb-2 border disabled:cursor-not-allowed rounded-lg block w-full py-3 px-6 outline-none bg-blue-300 placeholder-gray-600 text-black focus:ring-blue-500 focus:ring-2"
+                  className="mb-2 disabled:cursor-not-allowed rounded-lg block w-full py-3 px-6 outline-none bg-blue-300 placeholder-gray-600 text-black focus:ring-blue-500 focus:ring-2"
                   type="text"
                   placeholder="Preferred username"
                   value={username}
@@ -71,7 +71,7 @@ const LogIn = () => {
                 />
 
                 <input
-                  className="border disabled:cursor-not-allowed rounded-lg block w-full py-3 px-6 outline-none bg-blue-300 placeholder-gray-600 text-black focus:ring-blue-500 focus:ring-2"
+                  className="disabled:cursor-not-allowed rounded-lg block w-full py-3 px-6 outline-none bg-blue-300 placeholder-gray-600 text-black focus:ring-blue-500 focus:ring-2"
                   type="email"
                   placeholder="Type your best email"
                   value={email}
@@ -82,7 +82,23 @@ const LogIn = () => {
             <div className=" flex items-center justify-between py-2">
               <p
                 onClick={toggleForm}
-                className="hover:cursor-pointer pl-2 text-zinc-800 "
+                className="hover:cursor-pointer ml-2 pb-1 text-zinc-800
+                  relative
+                  block
+                  after:content-['']
+                  after:absolute
+                  after:bottom-0
+                  after:left-0
+                  after:w-full
+                  after:-translate-x-full
+                  after:h-[0.2em]
+                  after:bg-[#2DA4FF]
+                  after:transition-all
+                  after:duration-300
+                  overflow-hidden
+                  hover:after:opacity-100
+                  hover:after:translate-x-0
+                "
               >
                 {`${
                   formIsLogin
