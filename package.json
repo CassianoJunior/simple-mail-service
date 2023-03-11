@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "add-env": "echo \"DATABASE_URL=\"file:./dev.db\"\" > server/.env",
+    "add-env": "echo DATABASE_URL=\"file:./dev.db\" > server/.env",
     "dependencies": "npm i && cd client && npm i && cd ../server && npm i",
     "client": "cd client && npm run dev",
     "server": "cd server && npm run dev",
