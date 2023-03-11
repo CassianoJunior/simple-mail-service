@@ -43,9 +43,9 @@ const MailDetails = ({
         recipients,
         body: `On ${moment(participantOnMessage.message.createdAt).format(
           'MMM D, YYYY h:mm A'
-        )}, ${participantOnMessage.sender.name} wrote:\n ${
-          participantOnMessage.message.body
-        }`,
+        )}, ${participantOnMessage.sender.name} <${
+          participantOnMessage.sender.email
+        }> wrote:\n ${participantOnMessage.message.body}`,
       },
     });
   };
@@ -58,9 +58,9 @@ const MailDetails = ({
         recipients: [],
         body: `On ${moment(participantOnMessage.message.createdAt).format(
           'MMM D, YYYY h:mm A'
-        )}, ${participantOnMessage.sender.name} wrote:\n ${
-          participantOnMessage.message.body
-        }`,
+        )}, ${participantOnMessage.sender.name} <${
+          participantOnMessage.sender.email
+        }> wrote:\n ${participantOnMessage.message.body}`,
       },
     });
   };

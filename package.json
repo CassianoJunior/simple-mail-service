@@ -1,5 +1,25 @@
 {
+  "name": "webservice",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "client": "cd client && npm run dev",
+    "server": "cd server && npm run dev",
+    "start": "concurrently \"npm run server\" \"npm run client\" --kill-others-on-fail -k"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CassianoJunior/simple-mail-service.git"
+  },
+  "keywords": [],
+  "author": "https://github.com/CassianoJunior",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CassianoJunior/simple-mail-service/issues"
+  },
+  "homepage": "https://github.com/CassianoJunior/simple-mail-service#readme",
+  "description": "",
   "devDependencies": {
-    "@types/shortid": "^0.0.29"
+    "concurrently": "^7.6.0"
   }
 }
