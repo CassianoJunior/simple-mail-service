@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/gist/CassianoJunior/2c1476ec57e90e894e37075b6e7b6a1d/raw/4e8bdb21f474a57a45c526a1c003189ada14ce68/mail-ios.svg" width="30%" height="30%" />
+  <img src="https://raw.githubusercontent.com/gist/CassianoJunior/2c1476ec57e90e894e37075b6e7b6a1d/raw/4e8bdb21f474a57a45c526a1c003189ada14ce68/mail-ios.svg" width="25%" />
 </div>
 
 <h1 align="center">Simple mail service</h1>
@@ -23,7 +23,7 @@
 
 ### Requirements
 
-  - [Node](https://nodejs.org)
+  - [Node](https://nodejs.org) - Node.js is an open-source, cross-platform JavaScript runtime environment.
 
 Clone this repository using:
 ```
@@ -32,9 +32,10 @@ Clone this repository using:
 
 In directory created, open terminal and run these commands
 ```
-  npm run add-env-windows | npm run add-env-linux  # according to your OS. Add required .env file in server
-  npm run dependencies # install all project dependencies
-  npm start # start server and client in developer mode
+  npm run add-env-windows  # Add required .env file in server in Windows OS
+  npm run add-env-linux    # Add required .env file in server in Linux OS
+  npm run dependencies     # install all project dependencies
+  npm start                # start server and client in developer mode
 ```
 
 Open your preferred browser and go to ```http://localhost:5173``` or click on the link that appeared in the terminal.
@@ -69,7 +70,7 @@ and display dates and times in JavaScript.
 
 ```
   $PROJECT_ROOT
-    ├── client                    # Front end project folder
+    ├── client                    # Frontend project folder
     │     ├── public              # Vite public folder to simple access to archives
     │     └── src              
     │          ├── assets         # Files, images and videos used
@@ -81,7 +82,7 @@ and display dates and times in JavaScript.
     │          ├── App.tsx        # App
     │          ├── LogIn.tsx      # LogIn page
     │          └── main.tsx       # Vite main script to mount html
-    └── server
+    └── server                    # Backend project folder
           ├── prisma              # Prisma folder
           │     ├── migrations    # Prisma generated migrations
           │     ├── dev.db        # SQLite Database
@@ -98,9 +99,3 @@ and display dates and times in JavaScript.
                 ├── index.ts      # Server entry point
                 └── routes.ts     # Application routes
 ```
-
-│
-
-└──
-
-├──
