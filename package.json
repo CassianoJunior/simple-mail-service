@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dependencies": "cd client && npm i && cd ../server && npm i",
+    "dependencies": "npm i && cd client && npm i && cd ../server && npm i",
     "client": "cd client && npm run dev",
     "server": "cd server && npm run dev",
     "start": "concurrently \"npm run server\" \"npm run client\" --kill-others-on-fail -k"
