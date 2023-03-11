@@ -17,7 +17,7 @@ const Sidebar = ({
   handleClickInboxSection,
   handleClickSentSection,
 }: SidebarProps) => {
-  const { user, setUser, handleUserLogout } = useUserContext();
+  const { user, handleUserLogout } = useUserContext();
 
   return (
     <div className="h-screen px-2 bg-zinc-900 shadow-[0,_4px,_30px,_rgba(0,_0,_0,_0.1)] bg-opacity-40 backdrop-blur-md flex flex-col justify-between pb-6">

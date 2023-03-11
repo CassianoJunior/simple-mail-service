@@ -22,7 +22,6 @@ const userController = {
 
       res.writeHead(200, DEFAULT_HEADER);
       res.write(JSON.stringify(result.value));
-      console.log(result.value);
       res.end();
     } catch (err) {
       if (err instanceof z.ZodError) {

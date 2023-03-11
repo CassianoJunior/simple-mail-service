@@ -43,20 +43,8 @@ class ParticipantsOnMessageService {
       participantsOnMessage;
 
     await this.repository.update(id, {
-      ...participantsOnMessageRest,
       [`${who}Deleted`]: true,
     });
-
-    const participantsOnMessageUpdated = await this.repository.find(id);
-
-    if (
-      participantsOnMessageUpdated?.senderDeleted &&
-      participantsOnMessageUpdated.recipientDeleted
-    ) {
-      await this.messageRepository.delete(
-        participantsOnMessageUpdated.messageId
-      );
-    }
 
     return right((() => {})());
   }

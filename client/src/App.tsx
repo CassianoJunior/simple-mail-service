@@ -46,7 +46,7 @@ const App = () => {
     const message = allMessages.find((message) => message.id === id);
     setSelectedMessage(message);
 
-    if (message?.isRead) return;
+    if (message?.isRead && message.senderId === user?.id) return;
 
     if (message) {
       await api.put(`/readMessage?id=${message.id}`);

@@ -20,7 +20,7 @@ const MailDetails = ({
   participantOnMessage,
   setSelectedMessage,
 }: MailDetailsProps) => {
-  const { user, handleUserLoginRequest, getRecipients } = useUserContext();
+  const { user, requestUserData, getRecipients } = useUserContext();
 
   const { dispatch } = useMailContext();
 
@@ -76,7 +76,7 @@ const MailDetails = ({
     if (response.status === 204) {
       toast.success('Message deleted');
       setSelectedMessage(undefined);
-      return handleUserLoginRequest(user?.email || '');
+      return requestUserData(user?.email as string);
     }
 
     return toast.error('Something went wrong');

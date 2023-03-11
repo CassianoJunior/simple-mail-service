@@ -108,6 +108,7 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
     await api
       .get(`/users?email=${email}`)
       .then((response) => {
+        window.localStorage.setItem('user-email', `${userExists}`);
         setUser(response.data);
         formatUserMessages(response.data);
       })
@@ -155,6 +156,7 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
     setUser(undefined);
     setMessagesFormatted({ messagesReceived: [], messagesSent: [] });
     setUserExists(undefined);
+    window.localStorage.removeItem('user-email');
   };
 
   const contextValue = {

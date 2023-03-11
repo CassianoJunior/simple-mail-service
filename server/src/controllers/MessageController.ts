@@ -43,7 +43,6 @@ const messageController = {
           message: z.object({
             body: z.string(),
             subject: z.string(),
-            isRead: z.boolean().default(false),
           }),
           from: z.string(),
           to: z.array(z.string()),

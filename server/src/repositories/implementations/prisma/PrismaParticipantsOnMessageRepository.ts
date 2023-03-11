@@ -71,8 +71,7 @@ class PrismaParticipantsOnMessageRepository
     participantsOnMessageId: string,
     participantsOnMessageData: UpdateParticipantsOnMessageData
   ) {
-    console.log(participantsOnMessageData);
-    await prisma.participantsOnMessage.update({
+    const participantOnMessage = await prisma.participantsOnMessage.update({
       where: {
         id: participantsOnMessageId,
       },
@@ -80,6 +79,49 @@ class PrismaParticipantsOnMessageRepository
         ...participantsOnMessageData,
       },
     });
+
+    const wasSenderDeleted = participantsOnMessageData.senderDeleted ?? false;
+    console.log('wasSenderDeleted', wasSenderDeleted);
+    if (wasSenderDeleted) {
+      const otherMessages = await prisma.participantsOnMessage.findMany({
+        where: {
+          messageId: participantOnMessage.messageId,
+          senderId: participantOnMessage.senderId,
+        },
+      });
+
+      if (otherMessages.length !== 0) {
+        console.log('otherMessages', otherMessages);
+        await prisma.participantsOnMessage.updateMany({
+          where: {
+            messageId: participantOnMessage.messageId,
+            senderId: participantOnMessage.senderId,
+          },
+          data: {
+            senderDeleted: true,
+          },
+        });
+      }
+    }
+
+    const allMessagesSent = await prisma.participantsOnMessage.findMany({
+      where: {
+        messageId: participantOnMessage.messageId,
+        senderId: participantOnMessage.senderId,
+      },
+    });
+
+    if (
+      allMessagesSent.every(
+        (message) => message.senderDeleted && message.recipientDeleted
+      )
+    ) {
+      await prisma.message.delete({
+        where: {
+          id: participantOnMessage.messageId,
+        },
+      });
+    }
 
     return;
   }

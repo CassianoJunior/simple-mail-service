@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { App } from './App';
 import heroVideo from './assets/hero-video.mp4';
@@ -28,6 +28,15 @@ const LogIn = () => {
     setEmail('');
     setUsername('');
   };
+
+  useEffect(() => {
+    const userMail = window.localStorage.getItem('user-email');
+    if (userMail) {
+      handleUserLoginRequest(userMail || '');
+    }
+
+    setFormIsLogin(true);
+  }, [handleUserLoginRequest]);
 
   return userExists ? (
     <App />
@@ -107,6 +116,7 @@ const LogIn = () => {
                 }`}
               </p>
               <button
+                id="submit"
                 className="bg-[#2DA4FF] hover:bg-blue-500 hover:shadow-md hover:shadow-blue-300 text-white font-bold py-2 px-8 rounded focus:outline-none focus:shadow-outline"
                 onClick={
                   formIsLogin
