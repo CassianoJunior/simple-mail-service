@@ -5,8 +5,12 @@ import heroVideo from './assets/hero-video.mp4';
 import { useUserContext } from './contexts/UserContext';
 
 const LogIn = () => {
-  const { userExists, handleUserLoginRequest, handleUserRegisterRequest } =
-    useUserContext();
+  const {
+    userExists,
+    user,
+    handleUserLoginRequest,
+    handleUserRegisterRequest,
+  } = useUserContext();
   const [formIsLogin, setFormIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');

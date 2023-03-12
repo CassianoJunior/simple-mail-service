@@ -11,28 +11,31 @@
 
 ## Table of contents
   
-  - [Preview](#preview)
-  - [Instalation](#instalation)
-  - [Stack](#stack)
-    - [Client](#client)
-    - [Server](#server)
+- [Preview](#preview)
+- [Instalation](#instalation)
+- [Stack](#stack)
+  - [Client](#client)
+  - [Server](#server)
 
 ## Preview
 
+![Demo video](https://gist.githubusercontent.com/CassianoJunior/2c1476ec57e90e894e37075b6e7b6a1d/raw/5988e51e6de35ee1c482236080547ffe2b078091/demo-gif.gif)
 ## Instalation
 
 ### Requirements
 
-  - [Node](https://nodejs.org) - Node.js is an open-source, cross-platform JavaScript runtime environment.
+- [Node](https://nodejs.org) - Node.js is an open-source, cross-platform JavaScript runtime environment.
 
 Clone this repository using:
-```
+
+```bash
   git clone https://github.com/CassianoJunior/simple-mail-service
 ```
 
 In directory created, open terminal and run these commands
-```
-  npm run add-env-windows  # Add required .env file in server in Windows OS
+
+```bash
+  npm run add-env-win      # Add required .env file in server in Windows OS
   npm run add-env-linux    # Add required .env file in server in Linux OS
   npm run dependencies     # install all project dependencies
   npm start                # start server and client in developer mode
@@ -44,27 +47,27 @@ Enjoy the app.
 
 ## Stack
   
-  - #### Client
-    - [Vite](https://vitejs.dev) - Next Generation Frontend Tooling
-    - [React](https://reactjs.org) - A JavaScript library for building user interfaces
-    - [TypeScript](https://www.typescriptlang.org) - TypeScript is JavaScript with syntax for types.
-    - [Axios](https://axios-http.com) - Cliente HTTP baseado em promessas para o navegador e Node.js
-    - [Lucide](https://lucide.dev) - Beautiful & consistent icon toolkit made by the community.
-    - [Radix UI](https://www.radix-ui.com) - Unstyled, accessible components for building high‑quality design systems and web apps in React.
-    - [React Toastify](https://github.com/fkhadra/react-toastify) - React-Toastify allows you to add notifications to your app with ease. No more nonsense!
-    - [React Content Loader](https://github.com/danilowoz/react-content-loader) - SVG-Powered component to easily create placeholder loadings (like Facebook's cards loading).
-    - [Moment](https://momentjs.com) - Parse, validate, manipulate,
+- #### Client
+  - [Vite](https://vitejs.dev) - Next Generation Frontend Tooling
+  - [React](https://reactjs.org) - A JavaScript library for building user interfaces
+  - [TypeScript](https://www.typescriptlang.org) - TypeScript is JavaScript with syntax for types.
+  - [Axios](https://axios-http.com) - Cliente HTTP baseado em promessas para o navegador e Node.js
+  - [Lucide](https://lucide.dev) - Beautiful & consistent icon toolkit made by the community.
+  - [Radix UI](https://www.radix-ui.com) - Unstyled, accessible components for building high‑quality design systems and web apps in React.
+  - [React Toastify](https://github.com/fkhadra/react-toastify) - React-Toastify allows you to add notifications to your app with ease. No more nonsense!
+  - [React Content Loader](https://github.com/danilowoz/react-content-loader) - SVG-Powered component to easily create placeholder loadings (like Facebook's cards loading).
+  - [Moment](https://momentjs.com) - Parse, validate, manipulate,
 and display dates and times in JavaScript.
-    - [Tailwindcss](https://tailwindcss.com) - A utility-first CSS framework packed with classes that can be composed to build any design, directly in your markup.
+  - [Tailwindcss](https://tailwindcss.com) - A utility-first CSS framework packed with classes that can be composed to build any design, directly in your markup.
 
+- #### Server
 
-  - #### Server
-    - [SQLite](https://www.sqlite.org/index.html) - SQLite is a C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine
-    - [Prisma ORM](https://www.prisma.io) - Next-generation Node.js and TypeScript ORM
-    - [Zod]()
-    - [Dotenv](https://github.com/colinhacks/zod) - TypeScript-first schema validation with static type inference
-    - [TypeScript](https://www.typescriptlang.org) - TypeScript is JavaScript with syntax for types.
-    - [ShortID](https://www.npmjs.com/package/shortid) - Amazingly short non-sequential url-friendly unique id generator.
+  - [SQLite](https://www.sqlite.org/index.html) - SQLite is a C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine
+  - [Prisma ORM](https://www.prisma.io) - Next-generation Node.js and TypeScript ORM
+  - [Zod](https://github.com/colinhacks/zod) - TypeScript-first schema validation with static type inference
+  - [Dotenv](https://github.com/motdotla/dotenv) - Dotenv is a zero-dependency module that loads environment variables from a .env file into process.env.
+  - [TypeScript](https://www.typescriptlang.org) - TypeScript is JavaScript with syntax for types.
+  - [ShortID](https://www.npmjs.com/package/shortid) - Amazingly short non-sequential url-friendly unique id generator.
 
 ## Project structure
 

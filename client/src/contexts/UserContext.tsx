@@ -100,6 +100,14 @@ const UserContextProvider = ({ children }: UserProviderProps) => {
         }
       })
       .catch((err) => {
+        if (err.message === 'Network Error') {
+          toast.error('Server connection error');
+          setTimeout(() => {
+            return toast.warn('Verify if the server is running');
+          }, 1000);
+
+          return;
+        }
         return toast.error(err.response.data);
       });
   };

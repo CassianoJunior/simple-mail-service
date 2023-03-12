@@ -3,7 +3,7 @@ import { routes } from './routes';
 import { formatUrl, getUrlRoutes } from './utils/handleUrlString';
 import { DEFAULT_HEADER, handleError } from './utils/index.js';
 
-const PORT = 3000;
+const PORT = 3333;
 
 const server = (req: IncomingMessage, res: ServerResponse) => {
   const { url, method } = req;
