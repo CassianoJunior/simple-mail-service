@@ -44,6 +44,12 @@ In directory created, open terminal and run these commands
 
 Open your preferred browser and go to ```http://localhost:5173``` or click on the link that appeared in the terminal.
 
+>If you want to see the database, enter the server folder and type the command below in the terminal
+
+```bash
+ npx prisma studio
+```
+
 Enjoy the app.
 
 ## Stack
