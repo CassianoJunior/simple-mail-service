@@ -12,14 +12,14 @@
 ## Table of contents
   
 - [Preview](#preview)
-- [Instalation](#instalation)
+- [Installation](#installation)
 - [Stack](#stack)
   - [Client](#client)
   - [Server](#server)
 
 ## Preview
 
-![Demo video](https://gist.githubusercontent.com/CassianoJunior/2c1476ec57e90e894e37075b6e7b6a1d/raw/5988e51e6de35ee1c482236080547ffe2b078091/demo-gif.gif)
+<img src="https://gist.githubusercontent.com/CassianoJunior/2c1476ec57e90e894e37075b6e7b6a1d/raw/5988e51e6de35ee1c482236080547ffe2b078091/demo-gif.gif" align="center" />
 
 ## Installation
 

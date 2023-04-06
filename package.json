@@ -2,6 +2,11 @@
   "name": "webservice",
   "version": "1.0.0",
   "main": "index.js",
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
   "scripts": {
     "add-env-linux": "echo DATABASE_URL=\\\"file:./dev.db\\\" > server/.env",
     "add-env-win": "echo DATABASE_URL=\"file:./dev.db\" > server/.env",
@@ -23,6 +28,9 @@
   "homepage": "https://github.com/CassianoJunior/simple-mail-service#readme",
   "description": "",
   "devDependencies": {
-    "concurrently": "^7.6.0"
+    "concurrently": "^7.6.0",
+    "husky": "^8.0.3",
+    "@commitlint/cli": "^17.5.1",
+    "@commitlint/config-conventional": "^17.4.4"
   }
 }
